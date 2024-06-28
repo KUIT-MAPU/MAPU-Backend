@@ -8,6 +8,7 @@ public class MapuApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MapuApplication.class, args);
+		System.out.println("Hello, MAPU :)");
 	}
 
 }
