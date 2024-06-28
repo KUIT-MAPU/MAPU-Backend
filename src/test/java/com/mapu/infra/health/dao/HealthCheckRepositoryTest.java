@@ -16,7 +16,7 @@ class HealthCheckRepositoryTest {
 
     @DisplayName("DB 초기화 후, 전체 행 개수를 조회하면 4이어야 한다.")
     @Test
-    void countAllResult3AfterInit(){
+    void countAllResult4AfterInit(){
         //when
         long count = healthCheckRepository.count();
         //then
