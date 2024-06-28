@@ -1,9 +1,9 @@
 spring:
   profiles:
     group:
-      "local": "localDB, devPort, secret, web-mvc"
-      "dev": "devDB, devPort, secret, web-mvc"
-      "prod": "prodDB, prodPort, secret, web-mvc"
+      "local": "localDB, devPort"
+      "dev": "devDB, devPort"
+      "prod": "prodDB, prodPort"
     active: ${ACTIVE_PROFILE}
 
 ---
@@ -20,6 +20,7 @@ spring:
   sql:
     init:
       platform: mysql
+      mode: always
   jpa:
     hibernate:
       ddl-auto: update
@@ -42,6 +43,7 @@ spring:
   sql:
     init:
       platform: mysql
+      mode: always
   jpa:
     hibernate:
       ddl-auto: update
@@ -64,6 +66,7 @@ spring:
   sql:
     init:
       platform: mysql
+      mode: always
   jpa:
     hibernate:
       ddl-auto: update
