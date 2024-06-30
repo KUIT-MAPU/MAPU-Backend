@@ -27,8 +27,8 @@ jobs:
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
       #Permission Denied 해결
-      - name: Make gradlew executable`
-        run: chmod +x ./gradlew`
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
       #빌드 작업 실행(테스트도 같이 진행)
       - name: Build with Gradle Wrapper
