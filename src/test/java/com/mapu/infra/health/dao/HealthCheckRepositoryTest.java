@@ -14,7 +14,7 @@ class HealthCheckRepositoryTest {
     @Autowired
     HealthCheckRepository healthCheckRepository;
 
-    @DisplayName("DB 초기화 후, 전체 행 개수를 조회하면 4이어야 한다.")
+    @DisplayName("DB 초기화 후, 전체 행 개수를 조회하면 4여야 한다.")
     @Test
     void countAllResult4AfterInit(){
         //when
