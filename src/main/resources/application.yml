@@ -51,6 +51,12 @@ spring:
       hibernate:
           format_sql: true
           show_sql: true
+  log:
+    config:
+      path: ./logs
+      filename: app-dev
+      maxHistory: 7 # 7일
+      totalSizeCap: 1GB # 로그 파일 사이즈
 
 ---
 
