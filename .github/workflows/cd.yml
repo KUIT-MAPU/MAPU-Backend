@@ -32,6 +32,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Set Release YML File
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.RELEASE_YML }}" >./application.yml
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
@@ -39,7 +45,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle Wrapper
-        run: ./gradlew build -PactiveProfile=${{ secrets.ACTIVE_PROFILE }} -PdatasourceUrlDev=${{ secrets.DATASOURCE_URL_DEV }} -PdatasourcePassword=${{ secrets.DATASOURCE_PASSWORD }} -PdatasourceUsername=${{ secrets.DATASOURCE_USERNAME }}
+        run: ./gradlew build
 
       #AWS 인증
       - name: Configure AWS credentials

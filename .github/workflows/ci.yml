@@ -22,6 +22,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Set Release YML File
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.RELEASE_YML }}" >./application.ymlG
+
       #Gradle 설정 및 의존성 다운
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
@@ -32,4 +38,4 @@ jobs:
 
       #빌드 작업 실행(테스트도 같이 진행)
       - name: Build with Gradle Wrapper
-        run: ./gradlew build --ACTIVE_PROFILE=${{ secrets.ACTIVE_PROFILE }} --DATASOURCE_URL_DEV=${{ secrets.DATASOURCE_URL_DEV }} --DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }} --DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}
+        run: ./gradlew build
