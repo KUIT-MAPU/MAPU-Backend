@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [ closed ]
     branches: [ "dev","main" ]
+  push:
+    branches: [ "dev" ]
 
 env:
   AWS_REGION: ap-northeast-2
