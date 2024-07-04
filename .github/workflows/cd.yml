@@ -39,12 +39,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle Wrapper
-        run: ./gradlew build
-        env:
-          ACTIVE_PROFILE: ${{secrets.ACTIVE_PROFILE}}
-          DATASOURCE_URL_DEV: ${{ secrets.DATASOURCE_URL_DEV }}
-          DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
-          DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
+        run: ./gradlew build --ACTIVE_PROFILE ${{ secrets.ACTIVE_PROFILE }} --DATASOURCE_URL_DEV ${{ secrets.DATASOURCE_URL_DEV }} --DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }} --DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}
 
       #AWS 인증
       - name: Configure AWS credentials
