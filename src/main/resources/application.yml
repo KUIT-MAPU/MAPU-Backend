@@ -4,7 +4,7 @@ spring:
       "local": "localDB, devPort"
       "dev": "devDB, devPort"
       "prod": "prodDB, prodPort"
-    active: "dev"
+    active: ${ACTIVE_PROFILE}
 
 ---
 
@@ -36,15 +36,16 @@ spring:
     activate:
       on-profile: "devDB"
   datasource:
-    url: jdbc:mysql://mapu.cdomqg6wqwkp.ap-northeast-2.rds.amazonaws.com:3306/dev
-    username: admin
-    password: mapuMAPU123!
+    url: ${DATASOURCE_URL_DEV}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
       platform: mysql
       mode: always
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
     properties:
@@ -65,9 +66,9 @@ spring:
     activate:
       on-profile: "prodDB"
   datasource:
-    url: jdbc:mysql://mapu.cdomqg6wqwkp.ap-northeast-2.rds.amazonaws.com:3306/prod
-    username: admin
-    password: mapuMAPU123!
+    url: ${DATASOURCE_URL_PROD}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
