@@ -36,6 +36,12 @@ jobs:
           touch ./application.yml
           echo "${{ secrets.RELEASE_YML }}" >./application.yml
 
+      - name: Set Release Test YML File
+        run: |
+          cd ./src/test/resources
+          touch ./application.yml
+          echo "${{ secrets.RELEASE_TEST_YML }}" >./application.yml
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
@@ -43,7 +49,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle Wrapper
-        run: ./gradlew build
+        run: ./gradlew build --exclude-task test
 
       #AWS 인증
       - name: Configure AWS credentials

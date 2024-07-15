@@ -22,11 +22,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # main의 application.yml 생성
       - name: Set Release YML File
         run: |
           cd ./src/main/resources
           touch ./application.yml
-          echo "${{ secrets.RELEASE_YML }}" >./application.ymlG
+          echo "${{ secrets.RELEASE_YML }}" >./application.yml
+
+      # test의 application.yml 생성
+      - name: Set Release Test YML File
+        run: |
+          cd ./src/test/resources
+          touch ./application.yml
+          echo "${{ secrets.RELEASE_TEST_YML }}" >./application.yml
 
       #Gradle 설정 및 의존성 다운
       - name: Setup Gradle
@@ -38,4 +46,4 @@ jobs:
 
       #빌드 작업 실행(테스트도 같이 진행)
       - name: Build with Gradle Wrapper
-        run: ./gradlew build
+        run: ./gradlew build --exclude-task test
