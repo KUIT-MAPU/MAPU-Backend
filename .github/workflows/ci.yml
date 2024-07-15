@@ -24,9 +24,9 @@ jobs:
 
       - name: Set Release YML File
         run: |
-          touch ./application.yml
+          touch ./src/main/resources/application.yml
           echo "${{ secrets.RELEASE_YML }}" >./src/main/resources/application.yml
-          
+
       - name: Set Release Test YML File
         run : |
           touch ./src/test/resources/application.yml
