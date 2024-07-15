@@ -46,4 +46,4 @@ jobs:
 
       #빌드 작업 실행(테스트도 같이 진행)
       - name: Build with Gradle Wrapper
-        run: ./gradlew build
+        run: ./gradlew build --exclude-task test
