@@ -26,7 +26,7 @@ jobs:
         run: |
           cd ./src/main/resources
           touch ./application.yml
-          echo "${{ secrets.RELEASE_YML }}" >./application.ymlG
+          echo "${{ secrets.RELEASE_YML }}" >./application.yml
 
       #Gradle 설정 및 의존성 다운
       - name: Setup Gradle
