@@ -24,10 +24,15 @@ jobs:
 
       - name: Set Release YML File
         run: |
+          cd ./src/main/resources
           touch ./application.yml
-          echo "${{ secrets.RELEASE_YML }}" >./src/main/resources/application.yml
-          touch ./src/test/resources/application.yml
-          echo "${{ secrets.RELEASE_TEST_YML }}" >./src/test/resources/application.yml
+          echo "${{ secrets.RELEASE_YML }}" >./application.yml
+
+      - name: Set Release Test YML File
+        run: |
+          cd ./src/test/resources
+          touch ./application.yml
+          echo "${{ secrets.RELEASE_TEST_YML }}" >./application.yml
 
       #Gradle 설정 및 의존성 다운
       - name: Setup Gradle
