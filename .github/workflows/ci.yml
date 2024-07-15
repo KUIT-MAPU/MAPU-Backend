@@ -32,7 +32,7 @@ jobs:
       # test의 application.yml 생성
       - name: Set Release Test YML File
         run: |
-          cd ../../../test/resources
+          cd ./src/test/resources
           touch ./application.yml
           echo "${{ secrets.RELEASE_TEST_YML }}" >./application.yml
 

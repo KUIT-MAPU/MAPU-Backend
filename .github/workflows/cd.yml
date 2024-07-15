@@ -38,7 +38,7 @@ jobs:
 
       - name: Set Release Test YML File
         run: |
-          cd ../../../test/resources
+          cd ./src/test/resources
           touch ./application.yml
           echo "${{ secrets.RELEASE_TEST_YML }}" >./application.yml
 
