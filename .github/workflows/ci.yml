@@ -22,12 +22,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # main의 application.yml 생성
       - name: Set Release YML File
         run: |
           cd ./src/main/resources
           touch ./application.yml
           echo "${{ secrets.RELEASE_YML }}" >./application.yml
 
+      # test의 application.yml 생성
       - name: Set Release Test YML File
         run: |
           cd ./src/test/resources
