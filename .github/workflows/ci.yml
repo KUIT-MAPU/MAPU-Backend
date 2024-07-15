@@ -24,9 +24,7 @@ jobs:
 
       - name: Set Release YML File
         run: |
-          touch ./application.yml
           echo "${{ secrets.RELEASE_YML }}" >./src/main/resources/application.yml
-          touch ./src/test/resources/application.yml
           echo "${{ secrets.RELEASE_TEST_YML }}" >./src/test/resources/application.yml
 
       #Gradle 설정 및 의존성 다운
