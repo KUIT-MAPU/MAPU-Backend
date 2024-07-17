@@ -27,14 +27,14 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
-        //oauth2
-        http
-                .oauth2Login(Customizer.withDefaults());
+        //oauth2 -> 필요없음
+//        http
+//                .oauth2Login(Customizer.withDefaults());
 
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/oauth/login/**").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
