@@ -4,6 +4,7 @@ name: Java CI with Gradle
 on:
   pull_request:
     branches: [ "dev" ]
+    types: [ opened, synchronize ]
 
 #build 작업
 jobs:
