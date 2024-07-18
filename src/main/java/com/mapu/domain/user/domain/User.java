@@ -37,7 +37,7 @@ public class User extends BaseEntity {
 
     @NotNull
     @Column(nullable = false, unique = true, length = 20)
-    private String profile_id;
+    private String profileId;
 
     //nullable = true
     @Column(length = 100)
@@ -55,7 +55,7 @@ public class User extends BaseEntity {
         user.email = email;
         user.role = role;
         user.nickname = nickname;
-        user.profile_id = profile_id;
+        user.profileId = profile_id;
         user.image = image;
         user.status = status;
         return user;

@@ -39,7 +39,7 @@ public class OAuthLoginController {
 //            UserDTO tempUser = new UserDTO();
 //            tempUser.setEmail(oAuthUserInfo.getEmail());
 //            tempUser.setNickname(oAuthUserInfo.getNickname());
-//            tempUser.setProfile_id(oAuthUserInfo.getProfile_id());
+//            tempUser.setProfileId(oAuthUserInfo.getProfileId());
 //            session.setAttribute("tempUser", tempUser);
 //            log.info("Temporary user info saved in session: {}", tempUser);
 //        }
