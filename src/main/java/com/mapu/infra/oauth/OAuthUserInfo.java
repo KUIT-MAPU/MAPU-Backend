@@ -1,4 +1,4 @@
-package com.mapu.global.oauth;
+package com.mapu.infra.oauth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

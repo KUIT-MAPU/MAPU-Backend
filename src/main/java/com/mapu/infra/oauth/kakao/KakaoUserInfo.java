@@ -1,4 +1,4 @@
-package com.mapu.global.oauth.kakao;
+package com.mapu.infra.oauth.kakao;
 
 import lombok.Data;
 
