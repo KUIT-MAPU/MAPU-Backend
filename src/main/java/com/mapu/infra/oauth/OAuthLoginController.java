@@ -1,5 +1,6 @@
 package com.mapu.infra.oauth;
 
+import com.mapu.infra.oauth.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ import java.io.IOException;
 public class OAuthLoginController {
 
     private final OAuthService oAuthService;
-    private final JWTUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
     @GetMapping("/login/{socialLoginType}")
     public String socialLogin(@PathVariable("socialLoginType") String oauthType, @RequestParam String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
