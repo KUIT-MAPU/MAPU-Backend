@@ -1,13 +1,13 @@
-package com.mapu.global.oauth;
+package com.mapu.infra.oauth;
 
 import com.mapu.global.common.exception.BaseException;
 import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
-import com.mapu.global.oauth.google.GoogleToken;
-import com.mapu.global.oauth.google.GoogleUserInfo;
-import com.mapu.global.oauth.google.GoogleUserService;
-import com.mapu.global.oauth.kakao.KakaoToken;
-import com.mapu.global.oauth.kakao.KakaoUserInfo;
-import com.mapu.global.oauth.kakao.KakaoUserService;
+import com.mapu.infra.oauth.google.GoogleToken;
+import com.mapu.infra.oauth.google.GoogleUserInfo;
+import com.mapu.infra.oauth.google.GoogleUserService;
+import com.mapu.infra.oauth.kakao.KakaoToken;
+import com.mapu.infra.oauth.kakao.KakaoUserInfo;
+import com.mapu.infra.oauth.kakao.KakaoUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

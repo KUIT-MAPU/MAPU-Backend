@@ -1,17 +1,12 @@
-package com.mapu.global.oauth.google;
+package com.mapu.infra.oauth.google;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mapu.global.oauth.kakao.KakaoToken;
-import com.mapu.global.oauth.kakao.KakaoUserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.mapu.global.oauth.OAuthClientConfig;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.BodyInserters;
+import com.mapu.infra.oauth.OAuthClientConfig;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service

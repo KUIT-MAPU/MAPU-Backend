@@ -1,4 +1,4 @@
-package com.mapu.global.oauth;
+package com.mapu.infra.oauth;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

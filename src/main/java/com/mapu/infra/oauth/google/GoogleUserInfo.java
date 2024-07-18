@@ -1,4 +1,4 @@
-package com.mapu.global.oauth.google;
+package com.mapu.infra.oauth.google;
 
 import lombok.Data;
 
