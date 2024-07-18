@@ -30,6 +30,9 @@ repositories {
 dependencies {
 	//Spring
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 	//Lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -52,10 +55,15 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
+
 	//Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'com.h2database:h2'
+
+
+	implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
+
 }
 
 tasks.named('test') {
