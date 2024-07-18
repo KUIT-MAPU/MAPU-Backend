@@ -1,10 +1,7 @@
 package com.mapu.infra.oauth;
 
-import com.mapu.domain.user.domain.User;
-import com.mapu.global.common.exception.UserException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -20,6 +17,7 @@ import java.io.IOException;
 public class OAuthLoginController {
 
     private final OAuthService oAuthService;
+    private final JWTUtil jwtUtil;
 
     @GetMapping("/login/{socialLoginType}")
     public String socialLogin(@PathVariable("socialLoginType") String oauthType, @RequestParam String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -44,13 +42,15 @@ public class OAuthLoginController {
 //            log.info("Temporary user info saved in session: {}", tempUser);
 //        }
 
-        // TODO: 로그인 처리(세션에 토큰이랑 회원정보 저장 후 쿠키) ex : login(HttpServletRequest request, HttpServletResponse response, Member member, String access_token)
+        String role = "ROLE_USER"; //임시 role //TODO: db에서 유저 role 값 받아와서 넣기
+
+        response.addCookie(jwtUtil.createJwtCookie(oAuthUserInfo.email, role)); //TODO: 세션에도 보내줘야 하는지 논의
         return "redirect:/";
     }
 
-//    private void login(HttpServletRequest request, HttpServletResponse response, Member member, String access_token) {
+//    private void login(HttpServletRequest request, HttpServletResponse response, User user, String access_token) {
 //        HttpSession session = request.getSession();
-//        session.setAttribute(SessionConstants.LOGIN_MEMBER, member);
+//        session.setAttribute(SessionConstants.LOGIN_MEMBER, user);
 //        session.setAttribute(SessionConstants.ACCESS_TOKEN, access_token);
 //        log.info(session.getId());
 //    }

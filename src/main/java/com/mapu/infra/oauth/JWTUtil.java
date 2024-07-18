@@ -57,7 +57,8 @@ public class JWTUtil {
         return cookie;
     }
 
-    public Cookie createJwtCookie(String email, String role, Long expiredMs) {
-        return createCookie("Authorization", createJwt(email, role, expiredMs));
+    //TODO expiredMs 상수값 어디서 관리할지 논의
+    public Cookie createJwtCookie(String email, String role) {
+        return createCookie("Authorization", createJwt(email, role, 60*60*60L));
     }
 }
