@@ -1,5 +1,6 @@
 package com.mapu.infra.oauth;
 
+import com.mapu.infra.oauth.jwt.dto.JwtUserDto;
 import com.mapu.infra.oauth.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,8 +45,10 @@ public class OAuthLoginController {
 //        }
 
         String role = "ROLE_USER"; //임시 role //TODO: db에서 유저 role 값 받아와서 넣기
-
-        response.addCookie(jwtUtil.createJwtCookie(oAuthUserInfo.email, role)); //TODO: 세션에도 보내줘야 하는지 논의
+        JwtUserDto jwtUserDto = new JwtUserDto();
+        jwtUserDto.setName(oAuthUserInfo.email);
+        jwtUserDto.setRole(role);
+        response.addCookie(jwtUtil.createJwtCookie(jwtUserDto));
         return "redirect:/";
     }
 

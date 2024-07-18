@@ -1,5 +1,6 @@
 package com.mapu.infra.oauth.jwt;
 
+import com.mapu.infra.oauth.jwt.dto.JwtUserDto;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +13,7 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-
+    public static final String AUTHORIZATION = "Authorization";
     private SecretKey secretKey;
 
     public JwtUtil(@Value("${spring.jwt.secret}")String secret) {
@@ -20,9 +21,9 @@ public class JwtUtil {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    public String getEmail(String token) {
+    public String getName(String token) {
 
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("name", String.class);
     }
 
     public String getRole(String token) {
@@ -35,10 +36,10 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(String email, String role, Long expiredMs) {
+    public String createJwt(String name, String role, Long expiredMs) {
 
         return Jwts.builder()
-                .claim("email", email)
+                .claim("name", name)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
@@ -58,7 +59,7 @@ public class JwtUtil {
     }
 
     //TODO expiredMs 상수값 어디서 관리할지 논의
-    public Cookie createJwtCookie(String email, String role) {
-        return createCookie("Authorization", createJwt(email, role, 60*60*60L));
+    public Cookie createJwtCookie(JwtUserDto jwtUserDto) {
+        return createCookie(AUTHORIZATION, createJwt(jwtUserDto.getName(), jwtUserDto.getRole(), 60*60*60L));
     }
 }
