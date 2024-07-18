@@ -28,6 +28,10 @@ public enum BaseExceptionErrorCode implements ResponseStatus {
     BAD_SQL_GRAMMAR(3002, HttpStatus.INTERNAL_SERVER_ERROR.value(), "SQL에 오류가 있습니다."),
     TIME_OUT_OF_BOUND(3003, HttpStatus.INTERNAL_SERVER_ERROR.value(), "범위를 벗어난 날짜 정보가 존재합니다.");
 
+    /**
+     * 5000: OAUTH LOGIN 오류
+     * */
+
 
     private final int code;
     private final int status;
