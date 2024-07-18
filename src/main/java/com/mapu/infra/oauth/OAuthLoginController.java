@@ -48,7 +48,8 @@ public class OAuthLoginController {
         JwtUserDto jwtUserDto = new JwtUserDto();
         jwtUserDto.setName(oAuthUserInfo.email);
         jwtUserDto.setRole(role);
-        response.addCookie(jwtUtil.createJwtCookie(jwtUserDto));
+        response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
+        response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
         return "redirect:/";
     }
 

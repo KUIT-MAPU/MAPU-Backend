@@ -15,7 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.mapu.infra.oauth.jwt.JwtUtil.AUTHORIZATION;
+import static com.mapu.infra.oauth.jwt.JwtUtil.ACCESS;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -26,19 +26,19 @@ public class JwtFilter extends OncePerRequestFilter {
         String authorization = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(AUTHORIZATION)) {
+            if (cookie.getName().equals(ACCESS)) {
                 authorization = cookie.getValue();
             }
         }
         if (authorization == null) {
-            //token null
+            //token null //TODO 예외 처리 필요한지? 나머지 필터 돌려야 하는데 어떻게 예외를 터뜨릴지?
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authorization;
         if (jwtUtil.isExpired(token)) {
-            //token Expired
+            //token Expired //TODO refresh token 사용
             filterChain.doFilter(request, response);
             return;
         }
