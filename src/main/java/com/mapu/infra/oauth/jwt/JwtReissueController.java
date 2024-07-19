@@ -30,7 +30,8 @@ public class JwtReissueController {
 
         JwtUserDto jwtUserDto = jwtService.getUserDtoFromToken(refresh, REFRESH);
         response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
-        //TODO refresh rotation
+        //TODO blacklist old refresh token
+        response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
 
         return new BaseResponse<>(new ReissueResponseDto()); //TODO 응답 뭐 넣을지 채우기
     }
