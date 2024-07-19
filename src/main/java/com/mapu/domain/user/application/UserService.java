@@ -29,13 +29,14 @@ public class UserService {
 
         // signUpRequestDTO 입력값 검증
         validateSignUpRequest(signUpRequestDTO);
-        // 세션에 값이 있는지 확인
-        //TODO: 세션 여기 추가
-        String platfrom_name ="";
-        String platform_id = "";
-        String email = "";
 
-        if (platfrom_name == null || platform_id == null || email ==null) {
+        //세션 값 가져오기
+        String platfromName = session.getAttribute("platfromName").toString();
+        String platformId = session.getAttribute("platformId").toString();
+        String email = session.getAttribute("email").toString();
+
+        //세션에 값이 있는지 확인
+        if (platfromName == null || platformId == null || email ==null) {
             throw new UserException(UserExceptionErrorCode.LOGOUT_FAIL);
         }
 
@@ -45,7 +46,7 @@ public class UserService {
         }
 
         // 프로필 ID 중복 검사
-        if (userRepository.existsByProfileId(signUpRequestDTO.getProfile_id())) {
+        if (userRepository.existsByProfileId(signUpRequestDTO.getProfileId())) {
             throw new UserException(UserExceptionErrorCode.DUPLICATE_PROFILE_ID);
         }
 
@@ -53,7 +54,7 @@ public class UserService {
                 email,
                 "USER",
                 signUpRequestDTO.getNickname(),
-                signUpRequestDTO.getProfile_id(),
+                signUpRequestDTO.getProfileId(),
                 signUpRequestDTO.getImage(),
                 "ACTIVE"
         );
@@ -62,16 +63,16 @@ public class UserService {
         userRepository.save(user);
 
         OAuth oAuth = OAuth.createOAuth(
-                platfrom_name,
-                platform_id,
+                platfromName,
+                platformId,
                 user
         );
 
         oAuthRepository.save(oAuth);
 
         // 세션에 있는 유저 정보 삭제
-        session.removeAttribute("platfrom_name");
-        session.removeAttribute("platfrom_id");
+        session.removeAttribute("platformName");
+        session.removeAttribute("platformId");
         session.removeAttribute("email");
 
         return new SignUpResponseDTO();
@@ -84,10 +85,10 @@ public class UserService {
         if (signUpRequestDTO.getNickname().length() < 3 || signUpRequestDTO.getNickname().length() > 12) {
             throw new UserException(UserExceptionErrorCode.INVALID_NICKNAME_LENGTH);
         }
-        if (signUpRequestDTO.getProfile_id() == null || signUpRequestDTO.getProfile_id().trim().isEmpty()) {
+        if (signUpRequestDTO.getProfileId() == null || signUpRequestDTO.getProfileId().trim().isEmpty()) {
             throw new UserException(UserExceptionErrorCode.INVALID_PROFILE_ID);
         }
-        if (signUpRequestDTO.getProfile_id().length() < 3 || signUpRequestDTO.getProfile_id().length() > 20) {
+        if (signUpRequestDTO.getProfileId().length() < 3 || signUpRequestDTO.getProfileId().length() > 20) {
             throw new UserException(UserExceptionErrorCode.INVALID_PROFILE_ID_LENGTH);
         }
     }
