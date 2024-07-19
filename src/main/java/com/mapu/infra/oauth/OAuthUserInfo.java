@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class OAuthUserInfo {
+    String socialId;
     String email;
     String socialProvider;
 }
