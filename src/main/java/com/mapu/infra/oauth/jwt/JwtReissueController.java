@@ -1,11 +1,8 @@
 package com.mapu.infra.oauth.jwt;
 
-import com.mapu.global.common.exception.BaseException;
-import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
 import com.mapu.global.common.response.BaseResponse;
 import com.mapu.infra.oauth.jwt.dto.JwtUserDto;
 import com.mapu.infra.oauth.jwt.dto.ReissueResponseDto;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +16,7 @@ import static com.mapu.infra.oauth.jwt.JwtUtil.REFRESH;
 @RestController
 public class JwtReissueController {
     private final JwtUtil jwtUtil;
-    private final JwtReissueService jwtReissueService;
+    private final JwtService jwtService;
 
     @PostMapping("/reissue")
     public BaseResponse<ReissueResponseDto> reissue(HttpServletRequest request, HttpServletResponse response) {
@@ -31,7 +28,7 @@ public class JwtReissueController {
             }
         }
 
-        JwtUserDto jwtUserDto = jwtReissueService.getUserDtoFromRefreshToken(refresh);
+        JwtUserDto jwtUserDto = jwtService.getUserDtoFromToken(refresh, REFRESH);
         response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
         //TODO refresh rotation
 

@@ -1,6 +1,7 @@
 package com.mapu.global.common.config;
 
 import com.mapu.infra.oauth.jwt.JwtFilter;
+import com.mapu.infra.oauth.jwt.JwtService;
 import com.mapu.infra.oauth.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -35,7 +37,7 @@ public class SecurityConfig {
 
         //JWTFilter 추가
         http
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil, jwtService), UsernamePasswordAuthenticationFilter.class);
 
         //oauth2 -> 필요없음
 //        http
