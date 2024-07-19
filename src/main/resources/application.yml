@@ -7,6 +7,9 @@ spring:
     active: ${ACTIVE_PROFILE}
   jwt:
     secret: ${JWT_SECRET}
+    token:
+      access-expiration-time: 3600 #1hour
+      refresh-expiration-time: 86400 #24hour
 
 ---
 spring:

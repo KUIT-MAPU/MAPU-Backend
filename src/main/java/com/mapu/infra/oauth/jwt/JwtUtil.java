@@ -3,6 +3,7 @@ package com.mapu.infra.oauth.jwt;
 import com.mapu.infra.oauth.jwt.dto.JwtUserDto;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +20,16 @@ public class JwtUtil {
     public static final String ACCESS = "access";
     public static final String REFRESH = "refresh";
     private final SecretKey secretKey;
+    private final int accessExpiration;
+    private final int refreshExpiration;
 
-    public JwtUtil(@Value("${spring.jwt.secret}")String secret) {
+    public JwtUtil(@Value("${spring.jwt.secret}")String secret,
+                   @Value("${spring.jwt.token.access-expiration-time}")String accessExpiration,
+                   @Value("${spring.jwt.token.refresh-expiration-time}")String refreshExpiration) {
 
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
+        this.accessExpiration = Integer.parseInt(accessExpiration);
+        this.refreshExpiration = Integer.parseInt(refreshExpiration);
     }
 
     public String getCategory(String token) {
@@ -40,18 +47,20 @@ public class JwtUtil {
     }
 
     public Boolean isExpired(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+        Date expiration = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration();
+        Date now = new Date(System.currentTimeMillis());
+        return expiration.before(now);
     }
 
     public String createJwt(String category, String name, String role, Long expiredMs) {
-
+        Date expiration = new Date(System.currentTimeMillis() + expiredMs);
+        Date now = new Date(System.currentTimeMillis());
         return Jwts.builder()
                 .claim(CATEGORY, category)
                 .claim(NAME, name)
                 .claim(ROLE, role)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiredMs))
+                .issuedAt(now)
+                .expiration(expiration)
                 .signWith(secretKey)
                 .compact();
     }
@@ -67,13 +76,14 @@ public class JwtUtil {
         return cookie;
     }
 
-    //TODO expiredMs 상수값 어디서 관리할지 논의 -> 상수, application.yml, ...
     public Cookie createAccessJwtCookie(JwtUserDto jwtUserDto) {
-        return createCookie(ACCESS, createJwt(ACCESS, jwtUserDto.getName(), jwtUserDto.getRole(), 60*60*60L), 60*60*60);
+        return createCookie(ACCESS, createJwt(ACCESS, jwtUserDto.getName(), jwtUserDto.getRole(),
+                accessExpiration*1000L), accessExpiration);
     }
 
     public Cookie createRefreshJwtCookie(JwtUserDto jwtUserDto) {
-        return createCookie(REFRESH, createJwt(REFRESH, jwtUserDto.getName(), jwtUserDto.getRole(), 24*60*60L), 24*60*60);
+        return createCookie(REFRESH, createJwt(REFRESH, jwtUserDto.getName(), jwtUserDto.getRole(),
+                refreshExpiration*1000L), refreshExpiration);
     }
 
 }
