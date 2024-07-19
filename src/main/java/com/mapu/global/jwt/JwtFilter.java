@@ -1,6 +1,5 @@
 package com.mapu.global.jwt;
 
-import com.mapu.global.jwt.dto.CustomOAuth2User;
 import com.mapu.global.jwt.dto.JwtUserDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -50,8 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
 //        }
 
         JwtUserDto jwtUserDto = jwtService.getUserDtoFromToken(token, ACCESS);
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(jwtUserDto);
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(jwtUserDto, null, jwtUserDto.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
         filterChain.doFilter(request, response);
     }
