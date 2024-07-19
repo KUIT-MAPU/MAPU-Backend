@@ -1,9 +1,10 @@
-package com.mapu.infra.oauth.jwt;
+package com.mapu.global.jwt;
 
-import com.mapu.infra.oauth.jwt.dto.JwtUserDto;
+import com.mapu.global.jwt.dao.JwtRedisRepository;
+import com.mapu.global.jwt.domain.JwtRedis;
+import com.mapu.global.jwt.dto.JwtUserDto;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,14 +23,17 @@ public class JwtUtil {
     private final SecretKey secretKey;
     private final int accessExpiration;
     private final int refreshExpiration;
+    private final JwtRedisRepository jwtRedisRepository;
 
     public JwtUtil(@Value("${spring.jwt.secret}")String secret,
                    @Value("${spring.jwt.token.access-expiration-time}")String accessExpiration,
-                   @Value("${spring.jwt.token.refresh-expiration-time}")String refreshExpiration) {
+                   @Value("${spring.jwt.token.refresh-expiration-time}")String refreshExpiration,
+                   JwtRedisRepository jwtRedisRepository) {
 
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
         this.accessExpiration = Integer.parseInt(accessExpiration);
         this.refreshExpiration = Integer.parseInt(refreshExpiration);
+        this.jwtRedisRepository = jwtRedisRepository;
     }
 
     public String getCategory(String token) {
@@ -82,8 +86,8 @@ public class JwtUtil {
     }
 
     public Cookie createRefreshJwtCookie(JwtUserDto jwtUserDto) {
-        return createCookie(REFRESH, createJwt(REFRESH, jwtUserDto.getName(), jwtUserDto.getRole(),
-                refreshExpiration*1000L), refreshExpiration);
+        String token = createJwt(REFRESH, jwtUserDto.getName(), jwtUserDto.getRole(), refreshExpiration*1000L);
+        jwtRedisRepository.save(new JwtRedis(jwtUserDto.getName(), token, refreshExpiration));
+        return createCookie(REFRESH, token, refreshExpiration);
     }
-
 }

@@ -1,8 +1,9 @@
-package com.mapu.infra.oauth.jwt;
+package com.mapu.global.jwt;
 
 import com.mapu.global.common.exception.BaseException;
 import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
-import com.mapu.infra.oauth.jwt.dto.JwtUserDto;
+import com.mapu.global.jwt.dao.JwtRedisRepository;
+import com.mapu.global.jwt.dto.JwtUserDto;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
     private final JwtUtil jwtUtil;
+    private final JwtRedisRepository jwtRedisRepository;
 
     private void checkToken(String token, String tokenType) {
         if (token == null) {
@@ -31,7 +33,6 @@ public class JwtService {
             throw new BaseException(String.format("invalid %s token", tokenType), BaseExceptionErrorCode.BAD_REQUEST);
         }
     }
-
 
     public JwtUserDto getUserDtoFromToken(String token, String tokenType) {
         checkToken(token, tokenType);

@@ -1,8 +1,8 @@
 package com.mapu.global.common.config;
 
-import com.mapu.infra.oauth.jwt.JwtFilter;
-import com.mapu.infra.oauth.jwt.JwtService;
-import com.mapu.infra.oauth.jwt.JwtUtil;
+import com.mapu.global.jwt.JwtFilter;
+import com.mapu.global.jwt.JwtService;
+import com.mapu.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

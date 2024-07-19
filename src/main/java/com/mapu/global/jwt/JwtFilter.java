@@ -1,7 +1,7 @@
-package com.mapu.infra.oauth.jwt;
+package com.mapu.global.jwt;
 
-import com.mapu.infra.oauth.jwt.dto.CustomOAuth2User;
-import com.mapu.infra.oauth.jwt.dto.JwtUserDto;
+import com.mapu.global.jwt.dto.CustomOAuth2User;
+import com.mapu.global.jwt.dto.JwtUserDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -15,7 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.mapu.infra.oauth.jwt.JwtUtil.ACCESS;
+import static com.mapu.global.jwt.JwtUtil.ACCESS;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {

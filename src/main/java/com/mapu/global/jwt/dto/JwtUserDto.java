@@ -1,4 +1,4 @@
-package com.mapu.infra.oauth.jwt.dto;
+package com.mapu.global.jwt.dto;
 
 import lombok.Getter;
 import lombok.Setter;

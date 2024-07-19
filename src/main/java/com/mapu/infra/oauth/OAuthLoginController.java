@@ -1,7 +1,7 @@
 package com.mapu.infra.oauth;
 
-import com.mapu.infra.oauth.jwt.dto.JwtUserDto;
-import com.mapu.infra.oauth.jwt.JwtUtil;
+import com.mapu.global.jwt.JwtUtil;
+import com.mapu.global.jwt.dto.JwtUserDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ public class OAuthLoginController {
         log.info("socialLoginType: {}", oauthType.toUpperCase());
         OAuthUserInfo oAuthUserInfo = oAuthService.oAuthLogin(oauthType.toUpperCase(), code);
 
-        log.info("OAuth login response email info: {}", oAuthUserInfo.email);
+        //log.info("OAuth login response email info: {}", oAuthUserInfo.email);
         // TODO: oAuthUserInfo의 email로 DB에 user가 있는지 확인하고 없으면 DB에 저장
 //        User user;
 //        try {
@@ -44,10 +44,14 @@ public class OAuthLoginController {
 //            log.info("Temporary user info saved in session: {}", tempUser);
 //        }
 
-        String role = "ROLE_USER"; //임시 role //TODO: db에서 유저 role 값 받아와서 넣기
+        //TODO: 유저 role, email 값 받아와서 넣기
+        String role = "ROLE_USER"; //임시 role
+        String email = "email"; //임시 이메일
         JwtUserDto jwtUserDto = new JwtUserDto();
-        jwtUserDto.setName(oAuthUserInfo.email);
+        jwtUserDto.setName(email);
+        //jwtUserDto.setName(oAuthUserInfo.email);
         jwtUserDto.setRole(role);
+
         response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
         response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
         return "redirect:/";
