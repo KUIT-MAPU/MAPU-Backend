@@ -26,18 +26,21 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = null;
         Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(ACCESS)) {
                 token = cookie.getValue();
             }
         }
 
-        //TODO access 토큰 없어도 접근 가능해야 하는 화면에서 문제가 되는지 테스트 필요
-//        if (authorization == null) {
-//            //token null //예외 처리 필요한지? 나머지 필터 돌려야 하는데 어떻게 예외를 터뜨릴지?
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
+        if (token == null) {
+            //token null //TODO 예외 처리 필요한지? 나머지 필터 돌려야 하는데 어떻게 예외를 터뜨릴지?
+            filterChain.doFilter(request, response);
+            return;
+        }
 //
 //        String token = authorization;
 //        if (jwtUtil.isExpired(token)) {

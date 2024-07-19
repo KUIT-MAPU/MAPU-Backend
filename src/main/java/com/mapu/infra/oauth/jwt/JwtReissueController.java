@@ -1,5 +1,7 @@
 package com.mapu.infra.oauth.jwt;
 
+import com.mapu.global.common.exception.BaseException;
+import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
 import com.mapu.global.common.response.BaseResponse;
 import com.mapu.infra.oauth.jwt.dto.JwtUserDto;
 import com.mapu.infra.oauth.jwt.dto.ReissueResponseDto;
@@ -22,6 +24,9 @@ public class JwtReissueController {
     public BaseResponse<ReissueResponseDto> reissue(HttpServletRequest request, HttpServletResponse response) {
         String refresh = null;
         Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            throw new BaseException(String.format("쿠키에 토큰이 없습니다."), BaseExceptionErrorCode.BAD_REQUEST);
+        }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(REFRESH)) {
                 refresh = cookie.getValue();
