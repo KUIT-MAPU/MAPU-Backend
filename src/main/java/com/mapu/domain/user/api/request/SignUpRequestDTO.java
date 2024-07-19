@@ -12,7 +12,7 @@ public class SignUpRequestDTO {
     private String nickname;
 
     @Length(min = 3, max = 20)
-    private String profile_id;
+    private String profileId;
 
     private String image;
 }
