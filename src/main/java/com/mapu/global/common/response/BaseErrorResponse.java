@@ -3,6 +3,9 @@ package com.mapu.global.common.response;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.mapu.global.common.response.status.ResponseStatus;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDateTime;
 
@@ -25,6 +28,13 @@ public class BaseErrorResponse implements ResponseStatus {
     public BaseErrorResponse(ResponseStatus status, String message) {
         this.code = status.getCode();
         this.status = status.getStatus();
+        this.message = message;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    public BaseErrorResponse(String message) {
+        this.code = HttpStatus.BAD_REQUEST.value();
+        this.status = HttpStatus.BAD_GATEWAY.value();
         this.message = message;
         this.timestamp = LocalDateTime.now();
     }

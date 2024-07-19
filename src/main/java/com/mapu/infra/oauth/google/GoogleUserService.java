@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.mapu.infra.oauth.OAuthClientConfig;
+import com.mapu.infra.oauth.config.OAuthClientConfig;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service

@@ -4,10 +4,7 @@ import com.mapu.domain.user.domain.User;
 import com.mapu.global.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 @Entity
@@ -23,23 +20,20 @@ public class OAuth  extends BaseEntity {
 
     @NotNull
     @Column(nullable = false, length = 10)
-    private String platform_name;
+    private String platformName;
 
     @NotNull
     @Column(nullable = false, length = 20)
-    private String platform_id;
+    private String platformId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-
-    public static OAuth createOAuth(String platform_name, String platform_id, User user) {
-        OAuth oAuth = new OAuth();
-        oAuth.platform_name = platform_name;
-        oAuth.platform_id = platform_id;
-        oAuth.user = user;
-        return oAuth;
+    @Builder
+    public OAuth(String platformName, String platformId, User user) {
+        this.platformName = platformName;
+        this.platformId = platformId;
+        this.user = user;
     }
-
 }

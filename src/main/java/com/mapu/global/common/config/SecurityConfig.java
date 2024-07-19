@@ -34,7 +34,8 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/oauth/login/**").permitAll()
+                        .requestMatchers("/user/signin/**").permitAll()
+                        .requestMatchers("/user/signup/**").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
