@@ -37,6 +37,7 @@ public class UserService {
         String imageUrl = uploadImage(imageFile);
         saveDataToDB(userInfo, signUpRequestDTO, imageUrl);
         removeSessionData(session);
+        //TODO: JWT 토큰 발급
 
         return new SignUpResponseDTO(imageUrl);
     }
