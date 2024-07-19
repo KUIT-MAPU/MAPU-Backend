@@ -42,8 +42,8 @@ spring:
       on-profile: "localDB"
   datasource:
     url: ${DATASOURCE_URL_LOCAL}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
+    username: ${DATASOURCE_USERNAME_LOCAL}
+    password: ${DATASOURCE_PASSWORD_LOCAL}
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
@@ -57,6 +57,11 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ${REDIS_PASSWORD_LOCAL}
 
 ---
 
