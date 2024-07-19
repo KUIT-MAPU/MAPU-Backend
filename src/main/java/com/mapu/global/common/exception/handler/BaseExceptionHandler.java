@@ -20,7 +20,7 @@ import static com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode.
 
 @Slf4j
 @RestControllerAdvice
-public class BaseExceptionControllerAdvice {
+public class BaseExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({BaseException.class, NoHandlerFoundException.class, TypeMismatchException.class})
     public BaseErrorResponse handle_BadRequest(Exception exception) {
