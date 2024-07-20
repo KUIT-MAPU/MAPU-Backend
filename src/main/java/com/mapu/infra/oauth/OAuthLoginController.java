@@ -1,11 +1,16 @@
 package com.mapu.infra.oauth;
 
+import com.mapu.domain.user.dao.UserRepository;
+import com.mapu.domain.user.domain.User;
+import com.mapu.global.common.exception.UserException;
 import com.mapu.global.jwt.JwtUtil;
 import com.mapu.global.jwt.dto.JwtUserDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +23,10 @@ import java.io.IOException;
 @RequestMapping("/oauth")
 public class OAuthLoginController {
 
+    @Autowired
     private final OAuthService oAuthService;
+    @Autowired
+    private UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
     @GetMapping("/login/{socialLoginType}")
@@ -26,24 +34,20 @@ public class OAuthLoginController {
         log.info("socialLoginType: {}", oauthType.toUpperCase());
         OAuthUserInfo oAuthUserInfo = oAuthService.oAuthLogin(oauthType.toUpperCase(), code);
 
-        //log.info("OAuth login response email info: {}", oAuthUserInfo.email);
-        // TODO: oAuthUserInfo의 email로 DB에 user가 있는지 확인하고 없으면 DB에 저장
-//        User user;
-//        try {
-//            userRepository.findByEmail(email)
-//            user = userService.getUserByEmail(oAuthUserInfo.getEmail());
-//            // TODO: 토큰 발급 및 로그인 처리 (주석 처리)
-//        } catch (UserException e) {
-//            // 사용자 정보가 DB에 없을 경우 세션에 저장
-//            HttpSession session = request.getSession();
-//            UserDTO tempUser = new UserDTO();
-//            tempUser.setEmail(oAuthUserInfo.getEmail());
-//            tempUser.setNickname(oAuthUserInfo.getNickname());
-//            tempUser.setProfileId(oAuthUserInfo.getProfileId());
-//            session.setAttribute("tempUser", tempUser);
-//            log.info("Temporary user info saved in session: {}", tempUser);
-//        }
-
+        log.info("OAuth login response email info: {}", oAuthUserInfo.email);
+        // oAuthUserInfo의 email로 DB에 user가 있는지 확인하고 없으면 추가정보 입력을 위해 세션에 저장
+        if(userRepository.existsByEmail(oAuthUserInfo.getEmail())){
+            // TODO: 기존에 있던 User이므로 토큰 return (임시로 홈으로 redirect 시킴)
+            return "redirect:/";
+        }else{
+            // 사용자 정보가 DB에 없을 경우 세션에 저장
+            HttpSession session = request.getSession();
+            session.setAttribute("platform_id", oAuthUserInfo.getSocialId());
+            session.setAttribute("email", oAuthUserInfo.getEmail());
+            session.setAttribute("platform_name", oAuthUserInfo.getSocialProvider());
+            log.info("New user info saved in session: {}", oAuthUserInfo.getEmail());
+            return "redirect:/user/signup";
+        }
         //TODO: 유저 role, email 값 받아와서 넣기
         String role = "ROLE_USER"; //임시 role
         String email = "email"; //임시 이메일
@@ -56,12 +60,4 @@ public class OAuthLoginController {
         response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
         return "redirect:/";
     }
-
-//    private void login(HttpServletRequest request, HttpServletResponse response, User user, String access_token) {
-//        HttpSession session = request.getSession();
-//        session.setAttribute(SessionConstants.LOGIN_MEMBER, user);
-//        session.setAttribute(SessionConstants.ACCESS_TOKEN, access_token);
-//        log.info(session.getId());
-//    }
-
 }

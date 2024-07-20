@@ -28,7 +28,7 @@ public class OAuthService {
                     GoogleToken oAuthToken = googleUserService.getAccessToken(code);
                     GoogleUserInfo googleUserInfo = googleUserService.requestGoogleUserInfo(oAuthToken);
                     log.info("googleUser: " + googleUserInfo.email);
-                    userInfo = new OAuthUserInfo(googleUserInfo.email, socialLoginType);
+                    userInfo = new OAuthUserInfo(googleUserInfo.getId(), googleUserInfo.getEmail(), socialLoginType);
                     break;
                 } catch (Exception e) {
                     throw new BaseException("Google social login error", BaseExceptionErrorCode.BAD_REQUEST);
@@ -42,7 +42,7 @@ public class OAuthService {
                     KakaoUserInfo kakaoUserInfo = kakaoUserService.requestKakaoUserInfo(oAuthToken.getAccess_token());
                     // KakaoUserInfo kakaoUserInfo = kakaoUserService.requestKakaoUserInfo(code); // postman test 부분
                     log.info("kakaoUser: " + kakaoUserInfo.getKakao_account().getEmail());
-                    userInfo = new OAuthUserInfo(kakaoUserInfo.getKakao_account().getEmail(), socialLoginType);
+                    userInfo = new OAuthUserInfo(kakaoUserInfo.getId(),kakaoUserInfo.getKakao_account().getEmail(), socialLoginType);
                     break;
                 } catch (Exception e) {
                     throw new BaseException("Kakao social login error", BaseExceptionErrorCode.BAD_REQUEST);
