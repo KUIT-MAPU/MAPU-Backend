@@ -23,16 +23,7 @@ public class UserApi {
     public BaseResponse<SignUpResponseDTO> registerUser(@RequestBody @Validated SignUpRequestDTO signUpRequestDTO,
                                                         HttpServletResponse response) {
         SignUpResponseDTO signUpResponseDTO = userService.signUp(signUpRequestDTO);
-
-
-
-        //TODO: 유저 role, email 값 받아와서 넣기
-        String role = "ROLE_USER"; //임시 role
-        String email = "email"; //임시 이메일
-
-        JwtUserDto jwtUserDto = new JwtUserDto();
-        jwtUserDto.setName(email);
-        jwtUserDto.setRole(role);
+        JwtUserDto jwtUserDto = userService.getJwtUserByEmail(signUpResponseDTO.getEmail());
         response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
         response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
 
