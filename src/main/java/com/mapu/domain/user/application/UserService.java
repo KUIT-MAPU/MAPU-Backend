@@ -6,23 +6,35 @@ import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
 import com.mapu.global.common.exception.UserException;
 import com.mapu.global.common.exception.errorcode.UserExceptionErrorCode;
+import com.mapu.global.jwt.dto.JwtUserDto;
 import com.mapu.infra.oauth.dao.OAuthRepository;
 import com.mapu.infra.oauth.domain.OAuth;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+@RequiredArgsConstructor
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private OAuthRepository oAuthRepository;
-    @Autowired
-    private HttpSession session;
+    private final UserRepository userRepository;
+    private final OAuthRepository oAuthRepository;
+    private final HttpSession session;
 
+    public JwtUserDto getJwtUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null)
+        {
+            return null;
+        }
+        JwtUserDto jwtUserDto = new JwtUserDto();
+        jwtUserDto.setName(user.getEmail()); //TODO jwt에는 여기서만 넣는거라 Email 말고 다른 id값으로 넣어도 되는데 뭐가 나을지?
+        jwtUserDto.setRole(user.getRole());
+        return jwtUserDto;
+    }
 
     @Transactional
     public SignUpResponseDTO signUp(SignUpRequestDTO signUpRequestDTO) {
@@ -75,7 +87,9 @@ public class UserService {
         session.removeAttribute("platformId");
         session.removeAttribute("email");
 
-        return new SignUpResponseDTO();
+        SignUpResponseDTO signUpResponseDTO = new SignUpResponseDTO();
+        signUpResponseDTO.setEmail(email);
+        return signUpResponseDTO;
     }
 
     private void validateSignUpRequest(SignUpRequestDTO signUpRequestDTO) {
@@ -92,10 +106,5 @@ public class UserService {
             throw new UserException(UserExceptionErrorCode.INVALID_PROFILE_ID_LENGTH);
         }
     }
-
-//    @Transactional
-//    public User getUserByEmail(String email) {
-//        return userRepository.findByEmail(email)
-//    }
 
 }
