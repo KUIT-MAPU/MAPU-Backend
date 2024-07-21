@@ -42,7 +42,6 @@ public class KakaoUserService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-
         //json형태로 변환
         ObjectMapper objectMapper = new ObjectMapper();
         KakaoToken kakaoToken =null;
@@ -53,6 +52,7 @@ public class KakaoUserService {
             log.error("json processing error", e);
             e.printStackTrace();
         }
+
         return kakaoToken;
     }
     public KakaoUserInfo requestKakaoUserInfo(String token) {

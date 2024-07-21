@@ -50,6 +50,9 @@ dependencies {
 	//testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 	//Oauth2
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 

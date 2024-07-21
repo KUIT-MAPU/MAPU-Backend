@@ -1,6 +1,11 @@
 package com.mapu.domain.user.application.response;
 
-public class UserInfoResponseDTO {
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+public class UserInfoResponseDTO {
+    String message;
 }
 

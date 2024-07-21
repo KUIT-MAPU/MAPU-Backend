@@ -4,13 +4,17 @@ import com.mapu.domain.user.api.request.SignUpRequestDTO;
 import com.mapu.domain.user.application.response.SignUpResponseDTO;
 import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
+import com.mapu.domain.user.domain.UserRole;
 import com.mapu.domain.user.exception.UserException;
 import com.mapu.domain.user.exception.errorcode.UserExceptionErrorCode;
+import com.mapu.global.jwt.JwtUtil;
+import com.mapu.global.jwt.dto.JwtUserDto;
 import com.mapu.infra.oauth.dao.OAuthRepository;
 import com.mapu.infra.oauth.domain.OAuth;
 import com.mapu.infra.oauth.domain.OAuthUserInfo;
 import com.mapu.infra.s3.application.S3Service;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,18 +32,35 @@ public class UserService {
     private final UserRepository userRepository;
     private final OAuthRepository oAuthRepository;
     private final S3Service s3Service;
+    private final JwtUtil jwtUtil;
 
-    public SignUpResponseDTO signUp(SignUpRequestDTO signUpRequestDTO, MultipartFile imageFile, HttpSession session) throws IOException {
+    public SignUpResponseDTO signUp(SignUpRequestDTO signUpRequestDTO, MultipartFile imageFile, HttpSession session, HttpServletResponse response) throws IOException {
+        //세션으로부터 사용자 정보 받아오기
         OAuthUserInfo userInfo = getUserInfoFromSession(session);
+        //이미 회원가입된 상태인지 확인하기
         checkDuplicateSignUpRequest(userInfo.getEmail());
-        log.info("isDuplicate?: {}", userRepository.existsByEmail(userInfo.getEmail()));
+        //닉네임/ID 중복 확인하기
         checkDuplicateNameOrId(signUpRequestDTO);
+        //이미지 s3에 업로드하기
         String imageUrl = uploadImage(imageFile);
+        //DB에 사용자 정보 저장하기
         saveDataToDB(userInfo, signUpRequestDTO, imageUrl);
+        //세션 정보 삭제하기
         removeSessionData(session);
-        //TODO: JWT 토큰 발급
+        //jwt 발급하기
+        JwtUserDto jwtUserDto = JwtUserDto.builder()
+                .name(userInfo.getEmail())
+                .role(UserRole.USER.toString())
+                .build();
+
+        setCookieWithJWT(response,jwtUserDto);
 
         return new SignUpResponseDTO(imageUrl);
+    }
+
+    private void setCookieWithJWT(HttpServletResponse response, JwtUserDto jwtUserDto) {
+        response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
+        response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
     }
 
     private void checkDuplicateSignUpRequest(String email) {

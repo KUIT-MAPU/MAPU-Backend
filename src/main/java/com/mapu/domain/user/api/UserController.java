@@ -39,10 +39,10 @@ public class UserController {
     @GetMapping("/signin/{socialLoginType}")
     public BaseResponse<SignInResponseDTO> socialLogin(@PathVariable("socialLoginType") String oauthType,
                                                        @RequestParam("code") String code,
-                                                       HttpServletRequest httpServletRequest) {
+                                                       HttpServletRequest httpServletRequest,
+                                                       HttpServletResponse httpServletResponse) {
         log.info("socialLoginType: {}", oauthType.toUpperCase());
-                SignInResponseDTO response = oAuthService.login(oauthType.toUpperCase(), code,
-                httpServletRequest.getSession());
+        SignInResponseDTO response = oAuthService.login(oauthType.toUpperCase(), code, httpServletRequest.getSession(), httpServletResponse);
 
         return new BaseResponse<>(response);
     }
@@ -54,22 +54,26 @@ public class UserController {
     @PostMapping("/signup")
     public BaseResponse<SignUpResponseDTO> saveUser(@Validated @RequestPart("requestDTO") SignUpRequestDTO request,
                                                     @RequestPart("imageFile") MultipartFile imageFile,
-                                                    HttpServletRequest httpServletRequest) throws IOException {
+                                                    HttpServletRequest httpServletRequest,
+                                                    HttpServletResponse httpServletResponse) throws IOException {
         //TODO: @Validated 적용안되는 문제해결 필요
-        SignUpResponseDTO response = userService.signUp(request, imageFile, httpServletRequest.getSession(false));
+        SignUpResponseDTO response = userService.signUp(request, imageFile, httpServletRequest.getSession(false), httpServletResponse);
         return new BaseResponse<>(response);
     }
 
     /**
      * 유저데이터 조회 API
      */
-//    @GetMapping
-//    public BaseResponse<UserInfoResponseDTO> getUserInfo(){
-//        //ContextHolder로부터 userId 받기
-//
-//        UserInfoResponseDTO response = userService.getUserInfo();
-//        return new BaseResponse<>(response);
-//    }
+    @GetMapping
+    public BaseResponse<UserInfoResponseDTO> getUserInfo(){
+        //ContextHolder로부터 userId 받기
+        //UserInfoResponseDTO response = userService.getUserInfo();
+
+        UserInfoResponseDTO response = new UserInfoResponseDTO();
+        response.setMessage("유저데이터 조회 API 호출");
+
+        return new BaseResponse<>(response);
+    }
 
     /**
      * 유저데이터 수정 API

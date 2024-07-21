@@ -3,10 +3,15 @@ package com.mapu.infra.oauth.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mapu.domain.user.application.response.SignInResponseDTO;
 import com.mapu.domain.user.dao.UserRepository;
+import com.mapu.domain.user.domain.UserRole;
 import com.mapu.domain.user.exception.UserException;
 import com.mapu.domain.user.exception.errorcode.UserExceptionErrorCode;
 import com.mapu.global.common.exception.BaseException;
 import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
+import com.mapu.global.jwt.JwtUtil;
+import com.mapu.global.jwt.dto.JwtUserDto;
+import com.mapu.global.jwt.exception.JwtException;
+import com.mapu.global.jwt.exception.errorcode.JwtExceptionErrorCode;
 import com.mapu.infra.oauth.domain.OAuth;
 import com.mapu.infra.oauth.domain.OAuthUserInfo;
 import com.mapu.infra.oauth.exception.OAuthException;
@@ -33,20 +38,37 @@ public class OAuthService {
     private final GoogleUserService googleUserService;
     private final KakaoUserService kakaoUserService;
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
     static final String LOGIN_SUCCESS_MESSAGE = "로그인에 성공하였습니다.";
 
-    public SignInResponseDTO login(String socialLoginType, String code, HttpSession session) {
+    public SignInResponseDTO login(String socialLoginType, String code, HttpSession session, HttpServletResponse response) {
         OAuthUserInfo userInfo = getUserInfoFromOAuth(socialLoginType, code);
 
         if(userRepository.existsByEmail(userInfo.getEmail())){
             //로그인 성공
-            //TODO: JWT 토큰 발급
+            try{
+                //jwt 발급하기
+                JwtUserDto jwtUserDto = JwtUserDto.builder()
+                        .name(userInfo.getEmail())
+                        .role(UserRole.USER.toString())
+                        .build();
+
+                setCookieWithJWT(response,jwtUserDto);
+            } catch (Exception e){
+                throw new JwtException(JwtExceptionErrorCode.ERROR_IN_JWT);
+            }
         }else{
+            //회원가입 필요
             saveUserInfoToSession(session,userInfo);
             throw new UserException(OAuthExceptionErrorCode.NEED_TO_SIGNUP);
         }
 
         return new SignInResponseDTO(LOGIN_SUCCESS_MESSAGE);
+    }
+
+    private void setCookieWithJWT(HttpServletResponse response, JwtUserDto jwtUserDto) {
+        response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
+        response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
     }
 
     private OAuthUserInfo getUserInfoFromOAuth(String socialLoginType, String code) {
@@ -105,6 +127,7 @@ public class OAuthService {
 
     private OAuthUserInfo getKakaoUserInfo(String code) {
         KakaoToken oAuthToken = kakaoUserService.getAccessToken(code);
+
         KakaoUserInfo kakaoUserInfo = kakaoUserService.requestKakaoUserInfo(oAuthToken.getAccess_token());
         //KakaoUserInfo kakaoUserInfo = kakaoUserService.requestKakaoUserInfo(code); // postman test 부분
         log.info("kakaoUser: " + kakaoUserInfo.getKakao_account().getEmail());
