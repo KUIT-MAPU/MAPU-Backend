@@ -35,13 +35,13 @@ public class S3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String uploadImage(MultipartFile multipartFile, Long userId) throws IOException {
+    public String uploadImage(MultipartFile multipartFile) throws IOException {
         //파일 유효성 검증
         validateImageFileType(multipartFile.getContentType());
         validateImageFileSize(multipartFile.getSize());
 
         //파일 이름 생성 및 S3에 업로드
-        String fileName = generateFileName(multipartFile.getOriginalFilename(), userId);
+        String fileName = generateFileName(multipartFile.getOriginalFilename());
         uploadToS3Bucket(multipartFile, fileName);
 
         //이미지 URL 반환
@@ -102,8 +102,8 @@ public class S3Service {
         }
     }
 
-    private String generateFileName(String originalFilename, Long userId) {
-        return userId+"/"+originalFilename+"/"+ LocalDateTime.now();
+    private String generateFileName(String originalFilename) {
+        return originalFilename+"/"+ LocalDateTime.now();
     }
 
 

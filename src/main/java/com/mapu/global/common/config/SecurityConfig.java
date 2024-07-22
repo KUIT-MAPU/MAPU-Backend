@@ -1,7 +1,7 @@
 package com.mapu.global.common.config;
 
 import com.mapu.global.jwt.JwtFilter;
-import com.mapu.global.jwt.JwtService;
+import com.mapu.global.jwt.application.JwtService;
 import com.mapu.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +35,7 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
+
         //JWTFilter 추가
         http
                 .addFilterBefore(new JwtFilter(jwtUtil, jwtService), UsernamePasswordAuthenticationFilter.class);
@@ -46,8 +47,10 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/oauth/login/**", "/reissue", "/user/signup", "/error").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers("/user/signin/**").permitAll()
+                        .requestMatchers("/user/signup/**").permitAll()
+                        .requestMatchers("/reissue").permitAll()
+                        .requestMatchers("/error").permitAll());
 
         //세션 설정 : STATELESS
         http

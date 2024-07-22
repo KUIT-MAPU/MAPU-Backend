@@ -1,13 +1,13 @@
-package com.mapu.infra.s3.exception;
+package com.mapu.global.jwt.exception;
 
 import com.mapu.global.common.response.status.ResponseStatus;
 import lombok.Getter;
 
 @Getter
-public class AwsS3Exception extends RuntimeException{
+public class JwtException extends RuntimeException{
     private final ResponseStatus exceptionStatus;
 
-    public AwsS3Exception(ResponseStatus exceptionStatus) {
+    public JwtException(ResponseStatus exceptionStatus) {
         super(exceptionStatus.getMessage());
         this.exceptionStatus = exceptionStatus;
     }

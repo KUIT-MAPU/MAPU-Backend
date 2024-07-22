@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -74,6 +75,13 @@ public class BaseExceptionHandler {
     @ExceptionHandler(MissingServletRequestPartException.class)
     public BaseErrorResponse handle_MissingServletRequestPartException(MissingServletRequestPartException e) {
         log.error("[BaseExceptionControllerAdvice: handle_MissingServletRequestPartException 호출]", e);
+        return new BaseErrorResponse(INAPPROPRIATE_DATA);
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(HttpClientErrorException.Forbidden.class)
+    public BaseErrorResponse handle_ForbiddenException(HttpClientErrorException.Forbidden e){
+        log.error("[BaseExceptionControllerAdvice: handle_ForbiddenException 호출]", e);
         return new BaseErrorResponse(INAPPROPRIATE_DATA);
     }
 

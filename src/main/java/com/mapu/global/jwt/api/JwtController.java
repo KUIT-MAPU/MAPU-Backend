@@ -1,8 +1,10 @@
-package com.mapu.global.jwt;
+package com.mapu.global.jwt.api;
 
 import com.mapu.global.common.exception.BaseException;
 import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
 import com.mapu.global.common.response.BaseResponse;
+import com.mapu.global.jwt.JwtUtil;
+import com.mapu.global.jwt.application.JwtService;
 import com.mapu.global.jwt.dto.JwtUserDto;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,16 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-public class JwtReissueController {
+public class JwtController {
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
+    static String SUCCESS_MESSAGE = "access token 재발급 성공";
 
     @PostMapping("/reissue")
     public BaseResponse<String> reissue(HttpServletRequest request, HttpServletResponse response) {
         String refresh = null;
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
-            throw new BaseException(String.format("쿠키에 토큰이 없습니다."), BaseExceptionErrorCode.BAD_REQUEST);
+            throw new BaseException(BaseExceptionErrorCode.NO_COOKIE);
         }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(JwtUtil.REFRESH)) {
@@ -34,6 +37,6 @@ public class JwtReissueController {
         response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
         response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
 
-        return new BaseResponse<>("access token 재발급 성공");
+        return new BaseResponse<>(SUCCESS_MESSAGE);
     }
 }

@@ -1,5 +1,6 @@
 package com.mapu.global.jwt.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.AuthenticatedPrincipal;
@@ -23,5 +24,11 @@ public class JwtUserDto implements AuthenticatedPrincipal {
         Collection<GrantedAuthority> collection = new ArrayList<>();
         collection.add((GrantedAuthority) () -> role);
         return collection;
+    }
+
+    @Builder
+    public JwtUserDto(String role, String name) {
+        this.role = role;
+        this.name = name;
     }
 }

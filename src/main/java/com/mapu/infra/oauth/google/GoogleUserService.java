@@ -3,10 +3,10 @@ package com.mapu.infra.oauth.google;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mapu.infra.oauth.config.OAuthClientConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.mapu.infra.oauth.OAuthClientConfig;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service

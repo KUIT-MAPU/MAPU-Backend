@@ -1,12 +1,20 @@
 package com.mapu.global.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mapu.global.common.exception.BaseException;
+import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
+import com.mapu.global.common.response.status.ResponseStatus;
+import com.mapu.global.jwt.application.JwtService;
 import com.mapu.global.jwt.dto.JwtUserDto;
+import com.mapu.global.jwt.exception.JwtException;
+import com.mapu.global.jwt.exception.errorcode.JwtExceptionErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,10 +24,14 @@ import java.io.IOException;
 
 import static com.mapu.global.jwt.JwtUtil.ACCESS;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
+
+    //TODO: 필터에서 발생한 에러 핸들링 코드 구현 필요
+    //TODO: ACCESS-TOKEN을 넘겨도 403 FORBIDDEN ERROR가 뜸.
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -31,6 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(ACCESS)) {
+                log.info("jwt : {} ", cookie.getValue());
                 token = cookie.getValue();
             }
         }
@@ -53,4 +66,5 @@ public class JwtFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
         filterChain.doFilter(request, response);
     }
+
 }

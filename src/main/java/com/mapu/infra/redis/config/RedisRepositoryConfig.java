@@ -1,4 +1,4 @@
-package com.mapu.global.common.config;
+package com.mapu.infra.redis.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

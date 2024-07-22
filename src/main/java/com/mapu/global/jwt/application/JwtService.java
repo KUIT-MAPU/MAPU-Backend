@@ -1,9 +1,12 @@
-package com.mapu.global.jwt;
+package com.mapu.global.jwt.application;
 
 import com.mapu.global.common.exception.BaseException;
 import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
+import com.mapu.global.jwt.JwtUtil;
 import com.mapu.global.jwt.dao.JwtRedisRepository;
 import com.mapu.global.jwt.dto.JwtUserDto;
+import com.mapu.global.jwt.exception.JwtException;
+import com.mapu.global.jwt.exception.errorcode.JwtExceptionErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,33 +15,38 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
     private final JwtUtil jwtUtil;
-    private final JwtRedisRepository jwtRedisRepository;
 
     private void checkToken(String token, String tokenType) {
         if (token == null) {
             //response status code
-            throw new BaseException(String.format("%s token is null", tokenType), BaseExceptionErrorCode.BAD_REQUEST);
+            JwtExceptionErrorCode errorCode = JwtExceptionErrorCode.NO_JWT_TOKEN_IN_COOKIE;
+            errorCode.setMessage(String.format("%s token is null", tokenType));
+            throw new JwtException(errorCode);
         }
 
         //expired check
         try {
             jwtUtil.isExpired(token);
         } catch (ExpiredJwtException e) {
-            throw new BaseException(String.format("%s token is expired", tokenType), BaseExceptionErrorCode.BAD_REQUEST);
+            JwtExceptionErrorCode errorCode = JwtExceptionErrorCode.EXPIRED_JWT_TOKEN;
+            errorCode.setMessage(String.format("%s token is expired", tokenType));
+            throw new JwtException(errorCode);
         }
 
         // 토큰 type 확인 (발급시 페이로드에 명시)
         String category = jwtUtil.getCategory(token);
         if (!category.equals(tokenType)) {
-            throw new BaseException(String.format("invalid %s token", tokenType), BaseExceptionErrorCode.BAD_REQUEST);
+            JwtExceptionErrorCode errorCode = JwtExceptionErrorCode.INVALID_JWT_TOKEN;
+            errorCode.setMessage(String.format("invalid %s token", tokenType));
+            throw new JwtException(errorCode);
         }
     }
 
     public JwtUserDto getUserDtoFromToken(String token, String tokenType) {
         checkToken(token, tokenType);
-        JwtUserDto jwtUserDto = new JwtUserDto();
-        jwtUserDto.setName(jwtUtil.getName(token));
-        jwtUserDto.setRole(jwtUtil.getRole(token));
+        JwtUserDto jwtUserDto = JwtUserDto.builder().name(jwtUtil.getName(token))
+                .role(jwtUtil.getRole(token))
+                .build();
         return jwtUserDto;
     }
 }

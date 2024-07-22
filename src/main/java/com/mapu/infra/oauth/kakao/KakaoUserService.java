@@ -2,7 +2,7 @@ package com.mapu.infra.oauth.kakao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mapu.infra.oauth.OAuthClientConfig;
+import com.mapu.infra.oauth.config.OAuthClientConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,6 @@ public class KakaoUserService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-
         //json형태로 변환
         ObjectMapper objectMapper = new ObjectMapper();
         KakaoToken kakaoToken =null;
@@ -53,6 +52,7 @@ public class KakaoUserService {
             log.error("json processing error", e);
             e.printStackTrace();
         }
+
         return kakaoToken;
     }
     public KakaoUserInfo requestKakaoUserInfo(String token) {

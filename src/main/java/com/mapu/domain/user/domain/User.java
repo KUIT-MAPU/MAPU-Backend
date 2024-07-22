@@ -3,12 +3,8 @@ package com.mapu.domain.user.domain;
 import com.mapu.global.common.domain.BaseEntity;
 import com.mapu.infra.oauth.domain.OAuth;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.*;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 @Entity
@@ -22,42 +18,44 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //autoincrement
     private Long id;
 
-    @Email
-    @NotNull
+    @Email(message = "이메일 형식이 올바르지 않습니다.")
+    @NotNull(message = "이메일은 필수입니다.")
     @Column(nullable = false, unique = true, length = 20)
     private String email;
 
-    @NotNull
+    @NotNull(message = "역할은 필수입니다.")
     @Column(nullable = false, length = 10)
     private String role;
 
-    @NotNull
+    @NotNull(message = "닉네임은 필수입니다.")
+    @Size(min = 3, max = 12, message = "닉네임은 3글자 이상, 12글자 이하여야 합니다.")
     @Column(nullable = false, length = 20)
     private String nickname;
 
-    @NotNull
+    @NotNull(message = "프로필 아이디는 필수입니다.")
+    @Size(min = 3, max = 20, message = "프로필 아이디는 3글자 이상, 20글자 이하여야 합니다.")
+    @Pattern(regexp = "^[a-z0-9._]+$", message = "프로필 아이디는 영어 소문자, 숫자, 특수문자(.,_)만 사용가능합니다.")
     @Column(nullable = false, unique = true, length = 20)
     private String profileId;
 
     //nullable = true
-    @Column(length = 100)
+    @Column(length = 500)
     private String image;
 
-    @NotNull
+    @NotNull(message = "상태는 필수입니다.")
     @Column(nullable = false, length = 20)
     private String status;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
     private OAuth oauth;
 
-    public static User createUser(String email, String role, String nickname, String profileId, String image, String status) {
-        User user = new User();
-        user.email = email;
-        user.role = role;
-        user.nickname = nickname;
-        user.profileId = profileId;
-        user.image = image;
-        user.status = status;
-        return user;
+    @Builder
+    public User(String email, String role, String nickname, String profileId, String image, String status) {
+        this.email = email;
+        this.role = role;
+        this.nickname = nickname;
+        this.profileId = profileId;
+        this.image = image;
+        this.status = status;
     }
 }
