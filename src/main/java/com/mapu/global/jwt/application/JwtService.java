@@ -46,14 +46,13 @@ public class JwtService {
 
     public JwtUserDto getUserDtoFromToken(String token, String tokenType) {
         checkToken(token, tokenType);
-        JwtUserDto jwtUserDto = JwtUserDto.builder().name(Long.valueOf(jwtUtil.getName(token)))
+        return JwtUserDto.builder().name(Long.valueOf(jwtUtil.getName(token)))
                 .role(UserRole.valueOf(jwtUtil.getRole(token)))
                 .build();
-        return jwtUserDto;
     }
 
     private void verifyRefreshToken(String token) {
-        checkToken(token, jwtUtil.REFRESH);
+        checkToken(token, JwtUtil.REFRESH);
         if(!jwtRedisRepository.existsById(token)) {
             throw new JwtException(JwtExceptionErrorCode.UNKNOWN_REFRESH_TOKEN);
         }

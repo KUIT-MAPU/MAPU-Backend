@@ -79,14 +79,13 @@ public class JwtUtil {
     }
 
     public String createAccessToken(JwtUserDto jwtUserDto){
-        String name = jwtUserDto.getName().toString();
+        String name = jwtUserDto.getName();
         String role = jwtUserDto.getRole().toString();
-        String token = createJwt(ACCESS, name, role,accessExpiration*1000L);
-        return token;
+        return createJwt(ACCESS, name, role,accessExpiration*1000L);
     }
 
     public String createRefreshToken(JwtUserDto jwtUserDto) {
-        String name = jwtUserDto.getName().toString();
+        String name = jwtUserDto.getName();
         String role = jwtUserDto.getRole().toString();
         return createJwt(REFRESH, name, role, refreshExpiration*1000L);
     }
