@@ -1,9 +1,7 @@
 package com.mapu.global.jwt.application;
 
-import com.mapu.global.common.exception.BaseException;
-import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
+import com.mapu.domain.user.domain.UserRole;
 import com.mapu.global.jwt.JwtUtil;
-import com.mapu.global.jwt.dao.JwtRedisRepository;
 import com.mapu.global.jwt.dto.JwtUserDto;
 import com.mapu.global.jwt.exception.JwtException;
 import com.mapu.global.jwt.exception.errorcode.JwtExceptionErrorCode;
@@ -44,8 +42,8 @@ public class JwtService {
 
     public JwtUserDto getUserDtoFromToken(String token, String tokenType) {
         checkToken(token, tokenType);
-        JwtUserDto jwtUserDto = JwtUserDto.builder().name(jwtUtil.getName(token))
-                .role(jwtUtil.getRole(token))
+        JwtUserDto jwtUserDto = JwtUserDto.builder().name(Long.valueOf(jwtUtil.getName(token)))
+                .role(UserRole.valueOf(jwtUtil.getRole(token)))
                 .build();
         return jwtUserDto;
     }

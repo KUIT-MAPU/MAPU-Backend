@@ -3,16 +3,12 @@ package com.mapu.infra.oauth.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mapu.domain.user.application.response.SignInResponseDTO;
 import com.mapu.domain.user.dao.UserRepository;
-import com.mapu.domain.user.domain.UserRole;
+import com.mapu.domain.user.domain.User;
 import com.mapu.domain.user.exception.UserException;
-import com.mapu.domain.user.exception.errorcode.UserExceptionErrorCode;
-import com.mapu.global.common.exception.BaseException;
-import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
 import com.mapu.global.jwt.JwtUtil;
 import com.mapu.global.jwt.dto.JwtUserDto;
 import com.mapu.global.jwt.exception.JwtException;
 import com.mapu.global.jwt.exception.errorcode.JwtExceptionErrorCode;
-import com.mapu.infra.oauth.domain.OAuth;
 import com.mapu.infra.oauth.domain.OAuthUserInfo;
 import com.mapu.infra.oauth.exception.OAuthException;
 import com.mapu.infra.oauth.exception.errorcode.OAuthExceptionErrorCode;
@@ -22,7 +18,6 @@ import com.mapu.infra.oauth.google.GoogleUserService;
 import com.mapu.infra.oauth.kakao.KakaoToken;
 import com.mapu.infra.oauth.kakao.KakaoUserInfo;
 import com.mapu.infra.oauth.kakao.KakaoUserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -44,13 +39,14 @@ public class OAuthService {
     public SignInResponseDTO login(String socialLoginType, String code, HttpSession session, HttpServletResponse response) {
         OAuthUserInfo userInfo = getUserInfoFromOAuth(socialLoginType, code);
 
-        if(userRepository.existsByEmail(userInfo.getEmail())){
+        User user = userRepository.findByEmail(userInfo.getEmail());
+        if(user != null){
             //로그인 성공
             try{
                 //jwt 발급하기
                 JwtUserDto jwtUserDto = JwtUserDto.builder()
-                        .name(userInfo.getEmail())
-                        .role(UserRole.USER.toString())
+                        .name(user.getId())
+                        .role(user.getRole())
                         .build();
 
                 setCookieWithJWT(response,jwtUserDto);
