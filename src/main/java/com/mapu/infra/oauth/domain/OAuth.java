@@ -23,7 +23,7 @@ public class OAuth  extends BaseEntity {
     private String platformName;
 
     @NotNull
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 50)
     private String platformId;
 
     @OneToOne(fetch = FetchType.LAZY)

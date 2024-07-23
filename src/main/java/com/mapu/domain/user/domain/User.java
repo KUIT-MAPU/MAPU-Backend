@@ -20,7 +20,7 @@ public class User extends BaseEntity {
 
     @Email(message = "이메일 형식이 올바르지 않습니다.")
     @NotNull(message = "이메일은 필수입니다.")
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, unique = true, length = 50)
     private String email;
 
     @NotNull(message = "역할은 필수입니다.")
