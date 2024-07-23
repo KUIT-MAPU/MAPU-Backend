@@ -105,21 +105,15 @@ public class UserService {
         if(session==null){
             throw new UserException(UserExceptionErrorCode.NO_SESSION);
         }
-        OAuthUserInfo userInfo = OAuthUserInfo.builder()
-                .socialId(session.getAttribute("platform_id").toString())
-                .socialProvider(session.getAttribute("platform_name").toString())
-                .email(session.getAttribute("email").toString())
-                .build();
-        isExistInfoInSession(userInfo);
+        try{
+            OAuthUserInfo userInfo = OAuthUserInfo.builder()
+                    .socialId(session.getAttribute("platform_id").toString())
+                    .socialProvider(session.getAttribute("platform_name").toString())
+                    .email(session.getAttribute("email").toString())
+                    .build();
 
-        return userInfo;
-    }
-
-    private void isExistInfoInSession(OAuthUserInfo userInfo) {
-        //세션에 값이 있는지 확인
-        if (userInfo.getEmail() == null ||
-                userInfo.getSocialId() == null ||
-                userInfo.getSocialProvider() ==null) {
+            return userInfo;
+        } catch (Exception e){
             throw new UserException(UserExceptionErrorCode.NO_INFO_IN_SESSION);
         }
     }
