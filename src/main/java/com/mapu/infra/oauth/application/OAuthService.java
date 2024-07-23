@@ -1,7 +1,7 @@
 package com.mapu.infra.oauth.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mapu.domain.user.application.response.SignInResponseDTO;
+import com.mapu.domain.user.application.response.SignInUpResponseDTO;
 import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
 import com.mapu.domain.user.exception.UserException;
@@ -34,17 +34,17 @@ public class OAuthService {
     private final KakaoUserService kakaoUserService;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    static final String LOGIN_SUCCESS_MESSAGE = "로그인에 성공하였습니다.";
 
-    public SignInResponseDTO login(String socialLoginType, String code, HttpSession session, HttpServletResponse response) {
+    public SignInUpResponseDTO login(String socialLoginType, String code, HttpSession session, HttpServletResponse response) {
         OAuthUserInfo userInfo = getUserInfoFromOAuth(socialLoginType, code);
 
-        User user = userRepository.findByEmail(userInfo.getEmail());
-        if (user == null) {
+        if (!userRepository.existsByEmail(userInfo.getEmail())) {
             //회원가입 필요
             saveUserInfoToSession(session, userInfo);
             throw new UserException(OAuthExceptionErrorCode.NEED_TO_SIGNUP);
         }
+
+        User user = userRepository.findByEmail(userInfo.getEmail());
 
         //로그인 성공
         String accessToken = null;
@@ -65,7 +65,13 @@ public class OAuthService {
             throw new JwtException(JwtExceptionErrorCode.ERROR_IN_JWT);
         }
 
-        return new SignInResponseDTO(LOGIN_SUCCESS_MESSAGE, accessToken);
+        SignInUpResponseDTO responseDTO = SignInUpResponseDTO.builder()
+                .imgUrl(user.getImage())
+                .profileId(user.getProfileId())
+                .accessToken(accessToken)
+                .build();
+
+        return responseDTO;
     }
 
     private OAuthUserInfo getUserInfoFromOAuth(String socialLoginType, String code) {

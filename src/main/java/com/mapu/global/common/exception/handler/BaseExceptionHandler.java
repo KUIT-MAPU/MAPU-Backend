@@ -16,6 +16,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import static com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode.*;
 
@@ -68,7 +69,14 @@ public class BaseExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public BaseErrorResponse handle_MethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("[BaseExceptionControllerAdvice: handle_MethodArgumentNotValidException 호출]", e);
-        return new BaseErrorResponse(INAPPROPRIATE_DATA);
+
+        String errorMessages = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+
+        return new BaseErrorResponse(INAPPROPRIATE_DATA,errorMessages);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
