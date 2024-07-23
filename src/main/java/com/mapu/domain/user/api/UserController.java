@@ -49,6 +49,7 @@ public class UserController {
                                                     HttpServletRequest httpServletRequest,
                                                     HttpServletResponse httpServletResponse) throws IOException {
         SignInUpResponseDTO response = userService.signUp(request, imageFile, httpServletRequest.getSession(false), httpServletResponse);
+
         return new BaseResponse<>(response);
     }
 
