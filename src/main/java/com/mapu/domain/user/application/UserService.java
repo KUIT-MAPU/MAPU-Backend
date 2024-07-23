@@ -47,24 +47,25 @@ public class UserService {
         //세션 정보 삭제하기
         removeSessionData(session);
         //jwt 발급하기
-        JwtUserDto jwtUserDto = JwtUserDto.builder()
-                .name(userInfo.getEmail())
-                .role(UserRole.USER.toString())
-                .build();
+        User user = userRepository.findByEmail(userInfo.getEmail());
+        JwtUserDto jwtUserDto = null;
+        try {
+            jwtUserDto = JwtUserDto.builder()
+                    .name(user.getId())
+                    .role(user.getRole())
+                    .build();
+        } catch (Exception e) {
+            throw new UserException(UserExceptionErrorCode.SIGNUP_FAIL);
+        }
 
-        setCookieWithJWT(response,jwtUserDto);
-
+        response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
         SignInUpResponseDTO responseDTO = SignInUpResponseDTO.builder()
                 .imgUrl(imageUrl)
                 .profileId(signUpRequestDTO.getProfileId())
+                .accessToken(jwtUtil.createAccessToken(jwtUserDto))
                 .build();
 
         return responseDTO;
-    }
-
-    private void setCookieWithJWT(HttpServletResponse response, JwtUserDto jwtUserDto) {
-        response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
-        response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
     }
 
     private void checkDuplicateSignUpRequest(String email) {
@@ -85,7 +86,7 @@ public class UserService {
                 .image(imageUrl)
                 .nickname(signUpRequestDTO.getNickname())
                 .profileId(signUpRequestDTO.getProfileId())
-                .role("USER")
+                .role(UserRole.USER)
                 .status("ACTIVE")
                         .build();
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mapu.domain.user.application.response.SignInUpResponseDTO;
 import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
-import com.mapu.domain.user.domain.UserRole;
 import com.mapu.domain.user.exception.UserException;
 import com.mapu.global.jwt.JwtUtil;
 import com.mapu.global.jwt.dto.JwtUserDto;
@@ -39,37 +38,40 @@ public class OAuthService {
     public SignInUpResponseDTO login(String socialLoginType, String code, HttpSession session, HttpServletResponse response) {
         OAuthUserInfo userInfo = getUserInfoFromOAuth(socialLoginType, code);
 
-        if(userRepository.existsByEmail(userInfo.getEmail())){
-            //로그인 성공
-            try{
-                //jwt 발급하기
-                JwtUserDto jwtUserDto = JwtUserDto.builder()
-                        .name(userInfo.getEmail())
-                        .role(UserRole.USER.toString())
-                        .build();
-
-                setCookieWithJWT(response,jwtUserDto);
-            } catch (Exception e){
-                throw new JwtException(JwtExceptionErrorCode.ERROR_IN_JWT);
-            }
-        }else{
+        if (!userRepository.existsByEmail(userInfo.getEmail())) {
             //회원가입 필요
-            saveUserInfoToSession(session,userInfo);
+            saveUserInfoToSession(session, userInfo);
             throw new UserException(OAuthExceptionErrorCode.NEED_TO_SIGNUP);
         }
 
-        User loginUser = userRepository.findByEmail(userInfo.getEmail());
+        User user = userRepository.findByEmail(userInfo.getEmail());
+
+        //로그인 성공
+        String accessToken = null;
+        try {
+            //jwt 발급하기
+            JwtUserDto jwtUserDto = JwtUserDto.builder()
+                    .name(user.getId())
+                    .role(user.getRole())
+                    .build();
+
+            accessToken = jwtUtil.createAccessToken(jwtUserDto);
+            response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
+        } catch (Exception e) {
+            throw new JwtException(JwtExceptionErrorCode.ERROR_IN_JWT);
+        }
+
+        if (accessToken == null) {
+            throw new JwtException(JwtExceptionErrorCode.ERROR_IN_JWT);
+        }
+
         SignInUpResponseDTO responseDTO = SignInUpResponseDTO.builder()
-                .imgUrl(loginUser.getImage())
-                .profileId(loginUser.getProfileId())
+                .imgUrl(user.getImage())
+                .profileId(user.getProfileId())
+                .accessToken(accessToken)
                 .build();
 
         return responseDTO;
-    }
-
-    private void setCookieWithJWT(HttpServletResponse response, JwtUserDto jwtUserDto) {
-        response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
-        response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
     }
 
     private OAuthUserInfo getUserInfoFromOAuth(String socialLoginType, String code) {

@@ -25,7 +25,7 @@ public class User extends BaseEntity {
 
     @NotNull(message = "역할은 필수입니다.")
     @Column(nullable = false, length = 10)
-    private String role;
+    private UserRole role;
 
     @NotNull(message = "닉네임은 필수입니다.")
     @Size(min = 3, max = 12, message = "닉네임은 3글자 이상, 12글자 이하여야 합니다.")
@@ -50,7 +50,7 @@ public class User extends BaseEntity {
     private OAuth oauth;
 
     @Builder
-    public User(String email, String role, String nickname, String profileId, String image, String status) {
+    public User(String email, UserRole role, String nickname, String profileId, String image, String status) {
         this.email = email;
         this.role = role;
         this.nickname = nickname;

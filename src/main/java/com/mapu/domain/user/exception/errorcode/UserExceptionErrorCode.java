@@ -22,9 +22,9 @@ public enum UserExceptionErrorCode implements ResponseStatus {
 
     REMOVE_SESSION_DATA_FAIL(4008, HttpStatus.INTERNAL_SERVER_ERROR.value(), "세션 정보 삭제 중 오류가 발생했습니다."),
     LOGOUT_FAIL(4009, HttpStatus.BAD_REQUEST.value(), "로그아웃이 실패했습니다."),
-    DEREGISTRATION_FAIL(4010, HttpStatus.BAD_REQUEST.value(), "회원탈퇴 실패했습니다."),
-
-    ALREADY_SIGNUP(4011, HttpStatus.BAD_REQUEST.value(), "이미 회원가입된 사용자입니다.");
+    WITHDRAW_FAIL(4010, HttpStatus.BAD_REQUEST.value(), "회원탈퇴 실패했습니다."),
+    SIGNUP_FAIL(4011, HttpStatus.INTERNAL_SERVER_ERROR.value(), "회원 정보 등록 중 오류가 발생했습니다."),
+    ALREADY_SIGNUP(4012, HttpStatus.BAD_REQUEST.value(), "이미 회원가입된 사용자입니다.");
 
     private final int code;
     private final int status;
