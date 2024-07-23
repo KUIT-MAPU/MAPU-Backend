@@ -1,4 +1,4 @@
-package com.mapu.global.jwt;
+package com.mapu.global.jwt.api;
 
 import com.mapu.global.jwt.application.JwtService;
 import com.mapu.global.jwt.dto.JwtUserDto;
