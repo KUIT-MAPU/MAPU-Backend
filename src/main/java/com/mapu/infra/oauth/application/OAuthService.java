@@ -76,31 +76,18 @@ public class OAuthService {
 
         switch (socialLoginType) {
             case "GOOGLE": {
-                try {
-                    userInfo = getGoogleUserInfo(code);
-                    //TODO: null일 때 예외 처리
-                } catch (Exception e) {
-                    throw new OAuthException(OAuthExceptionErrorCode.GOOGLE_LOGIN_FAIL);
-                }finally {
-                    break;
-                }
+                userInfo = getGoogleUserInfo(code);
+                log.info("google user info: {}", userInfo.getEmail());
+                break;
             }
             case "KAKAO": {
-                try {
-                    userInfo = getKakaoUserInfo(code);
-                    //TODO: null일 때 예외 처리
-                } catch (Exception e) {
-                    throw new OAuthException(OAuthExceptionErrorCode.KAKAO_LOGIN_FAIL);
-                } finally {
-                    break;
-                }
+                userInfo = getKakaoUserInfo(code);
+                break;
             }
             default: {
-                // 기본 오류 처리
                 throw new OAuthException(OAuthExceptionErrorCode.INVALID_SOCIAL_LOGIN_TYPE);
             }
         }
-
         return userInfo;
     }
 
@@ -111,33 +98,35 @@ public class OAuthService {
         log.info("New user info saved in session: {}", session.getAttribute("email"));
     }
 
-    private OAuthUserInfo getGoogleUserInfo(String code) throws JsonProcessingException {
-        GoogleToken oAuthToken = googleUserService.getAccessToken(code);
-        GoogleUserInfo googleUserInfo = googleUserService.requestGoogleUserInfo(oAuthToken);
-        log.info("googleUser: " + googleUserInfo.email);
-
-        OAuthUserInfo oAuthUserInfo = OAuthUserInfo.builder()
-                .socialId(googleUserInfo.getId())
-                .socialProvider("google")
-                .email(googleUserInfo.email)
-                .build();
-
-        return oAuthUserInfo;
+    private OAuthUserInfo getGoogleUserInfo(String code){
+        GoogleToken googleToken = googleUserService.getAccessToken(code);
+        try {
+            GoogleUserInfo googleUserInfo = googleUserService.requestGoogleUserInfo(googleToken);
+            log.info("googleUser: " + googleUserInfo.email);
+            OAuthUserInfo oAuthUserInfo = OAuthUserInfo.builder()
+                    .socialId(googleUserInfo.getId())
+                    .socialProvider("google")
+                    .email(googleUserInfo.email)
+                    .build();
+            return oAuthUserInfo;
+        }catch (Exception e){
+            throw new OAuthException(OAuthExceptionErrorCode.GOOGLE_LOGIN_FAIL);
+        }
     }
 
     private OAuthUserInfo getKakaoUserInfo(String code) {
-        KakaoToken oAuthToken = kakaoUserService.getAccessToken(code);
-
-        KakaoUserInfo kakaoUserInfo = kakaoUserService.requestKakaoUserInfo(oAuthToken.getAccess_token());
-        //KakaoUserInfo kakaoUserInfo = kakaoUserService.requestKakaoUserInfo(code); // postman test 부분
-        log.info("kakaoUser: " + kakaoUserInfo.getKakao_account().getEmail());
-
-        OAuthUserInfo oAuthUserInfo = OAuthUserInfo.builder()
-                .socialId(kakaoUserInfo.getId())
-                .socialProvider("kakao")
-                .email(kakaoUserInfo.getKakao_account().email)
-                .build();
-        
-        return oAuthUserInfo;
+        KakaoToken kakaoToken = kakaoUserService.getAccessToken(code);
+        try {
+            KakaoUserInfo kakaoUserInfo = kakaoUserService.requestKakaoUserInfo(kakaoToken);
+            log.info("kakaoUser: " + kakaoUserInfo.getKakao_account().getEmail());
+            OAuthUserInfo oAuthUserInfo = OAuthUserInfo.builder()
+                    .socialId(kakaoUserInfo.getId())
+                    .socialProvider("kakao")
+                    .email(kakaoUserInfo.getKakao_account().email)
+                    .build();
+            return oAuthUserInfo;
+        }catch (Exception e){
+            throw new OAuthException(OAuthExceptionErrorCode.KAKAO_LOGIN_FAIL);
+        }
     }
 }
