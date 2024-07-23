@@ -85,10 +85,10 @@ public class JwtUtil {
         return token;
     }
 
-    public String createRefreshToken(JwtUserDto jwtUserDto){
+    public String createRefreshToken(JwtUserDto jwtUserDto) {
         String name = jwtUserDto.getName().toString();
         String role = jwtUserDto.getRole().toString();
-        String token = createJwt(REFRESH, name, role, refreshExpiration*1000L);
+        return createJwt(REFRESH, name, role, refreshExpiration*1000L);
     }
 
     public Cookie createRefreshJwtCookie(JwtUserDto jwtUserDto) {
