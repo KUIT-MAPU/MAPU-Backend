@@ -70,8 +70,6 @@ dependencies {
 	testImplementation 'com.h2database:h2'
 
 
-	implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
-
 }
 
 tasks.named('test') {
