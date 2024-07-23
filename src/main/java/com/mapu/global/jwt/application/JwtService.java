@@ -71,4 +71,10 @@ public class JwtService {
         JwtUserDto jwtUserDto = getUserDtoFromToken(refresh, JwtUtil.REFRESH);
         return jwtUtil.rotateRefreshJwtCookie(jwtUserDto, refresh);
     }
+
+
+    public void deleteRefreshJwt(String refresh) {
+        verifyRefreshToken(refresh);
+        jwtRedisRepository.deleteById(refresh);
+    }
 }

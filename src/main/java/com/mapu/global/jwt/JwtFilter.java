@@ -20,7 +20,6 @@ import static com.mapu.global.jwt.JwtUtil.ACCESS;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-    private final JwtUtil jwtUtil;
     private final JwtService jwtService;
 
     @Override
@@ -38,5 +37,4 @@ public class JwtFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
         filterChain.doFilter(request, response);
     }
-
 }
