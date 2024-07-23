@@ -47,10 +47,10 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/user/signin/**").permitAll()
-                        .requestMatchers("/user/signup/**").permitAll()
-                        .requestMatchers("/reissue").permitAll()
-                        .requestMatchers("/error").permitAll());
+                        .requestMatchers("/user/signin/**", "/user/signup/**").permitAll()
+                        .requestMatchers("/jwt/reissue").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
         http
