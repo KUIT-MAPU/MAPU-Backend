@@ -1,4 +1,4 @@
-package com.mapu.global.jwt.filter;
+package com.mapu.global.jwt.filter.handler;
 
 import com.mapu.global.common.exception.BaseException;
 import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
