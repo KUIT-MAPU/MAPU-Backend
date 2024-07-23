@@ -85,16 +85,15 @@ public class JwtUtil {
         return token;
     }
 
-    public Cookie createRefreshJwtCookie(JwtUserDto jwtUserDto) {
+    public String createRefreshToken(JwtUserDto jwtUserDto){
         String name = jwtUserDto.getName().toString();
         String role = jwtUserDto.getRole().toString();
         String token = createJwt(REFRESH, name, role, refreshExpiration*1000L);
-        jwtRedisRepository.save(new JwtRedis(token, refreshExpiration));
-        return createCookie(REFRESH, token, refreshExpiration);
     }
 
-    public Cookie rotateRefreshJwtCookie(JwtUserDto jwtUserDto, String oldRefresh) {
-        jwtRedisRepository.deleteById(oldRefresh);
-        return createRefreshJwtCookie(jwtUserDto);
+    public Cookie createRefreshJwtCookie(JwtUserDto jwtUserDto) {
+        String token = createRefreshToken(jwtUserDto);
+        jwtRedisRepository.save(new JwtRedis(token, refreshExpiration));
+        return createCookie(REFRESH, token, refreshExpiration);
     }
 }

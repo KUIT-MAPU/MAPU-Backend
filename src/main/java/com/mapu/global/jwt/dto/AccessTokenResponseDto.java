@@ -1,4 +1,4 @@
-package com.mapu.global.jwt.application;
+package com.mapu.global.jwt.dto;
 
 import lombok.Getter;
 

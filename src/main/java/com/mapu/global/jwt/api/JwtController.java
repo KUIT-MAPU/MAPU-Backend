@@ -4,7 +4,7 @@ import com.mapu.global.common.exception.BaseException;
 import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
 import com.mapu.global.common.response.BaseResponse;
 import com.mapu.global.jwt.JwtUtil;
-import com.mapu.global.jwt.application.AccessTokenResponseDto;
+import com.mapu.global.jwt.dto.AccessTokenResponseDto;
 import com.mapu.global.jwt.application.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 public class JwtController {
-    private final JwtUtil jwtUtil;
     private final JwtService jwtService;
 
     @PostMapping("/reissue")
