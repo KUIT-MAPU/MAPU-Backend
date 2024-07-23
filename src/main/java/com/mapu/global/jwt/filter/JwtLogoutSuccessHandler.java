@@ -1,4 +1,4 @@
-package com.mapu.global.jwt.application;
+package com.mapu.global.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mapu.global.common.response.BaseResponse;

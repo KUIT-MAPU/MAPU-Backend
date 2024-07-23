@@ -1,8 +1,6 @@
-package com.mapu.global.jwt.api;
+package com.mapu.global.jwt.filter;
 
 import com.mapu.global.jwt.JwtUtil;
-import com.mapu.global.jwt.application.JwtLogoutHandler;
-import com.mapu.global.jwt.application.JwtLogoutSuccessHandler;
 import com.mapu.global.jwt.application.JwtService;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;

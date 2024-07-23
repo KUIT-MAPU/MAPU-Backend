@@ -1,8 +1,9 @@
-package com.mapu.global.jwt.application;
+package com.mapu.global.jwt.filter;
 
 import com.mapu.global.common.exception.BaseException;
 import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
 import com.mapu.global.jwt.JwtUtil;
+import com.mapu.global.jwt.application.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

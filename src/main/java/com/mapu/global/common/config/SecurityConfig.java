@@ -1,7 +1,7 @@
 package com.mapu.global.common.config;
 
-import com.mapu.global.jwt.api.JwtFilter;
-import com.mapu.global.jwt.api.JwtLogoutFilter;
+import com.mapu.global.jwt.filter.JwtFilter;
+import com.mapu.global.jwt.filter.JwtLogoutFilter;
 import com.mapu.global.jwt.application.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
