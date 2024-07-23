@@ -7,6 +7,7 @@ import com.mapu.global.jwt.dto.JwtUserDto;
 import com.mapu.global.jwt.exception.JwtException;
 import com.mapu.global.jwt.exception.errorcode.JwtExceptionErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -50,10 +51,24 @@ public class JwtService {
         return jwtUserDto;
     }
 
-    public void verifyRefreshToken(String token) {
+    private void verifyRefreshToken(String token) {
         checkToken(token, jwtUtil.REFRESH);
         if(!jwtRedisRepository.existsById(token)) {
             throw new JwtException(JwtExceptionErrorCode.UNKNOWN_REFRESH_TOKEN);
         }
+    }
+
+    public AccessTokenResponseDto reissueAccessToken(String refresh) {
+        verifyRefreshToken(refresh);
+        JwtUserDto jwtUserDto = getUserDtoFromToken(refresh, JwtUtil.REFRESH);
+        String accessToken = jwtUtil.createAccessToken(jwtUserDto);
+
+        return new AccessTokenResponseDto(accessToken);
+    }
+
+    public Cookie rotateRefreshToken(String refresh) {
+        verifyRefreshToken(refresh);
+        JwtUserDto jwtUserDto = getUserDtoFromToken(refresh, JwtUtil.REFRESH);
+        return jwtUtil.rotateRefreshJwtCookie(jwtUserDto, refresh);
     }
 }

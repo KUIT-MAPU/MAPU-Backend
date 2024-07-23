@@ -4,8 +4,8 @@ import com.mapu.global.common.exception.BaseException;
 import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
 import com.mapu.global.common.response.BaseResponse;
 import com.mapu.global.jwt.JwtUtil;
+import com.mapu.global.jwt.application.AccessTokenResponseDto;
 import com.mapu.global.jwt.application.JwtService;
-import com.mapu.global.jwt.dto.JwtUserDto;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,10 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class JwtController {
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
-    static String SUCCESS_MESSAGE = "access token 재발급 성공";
 
     @PostMapping("/reissue")
-    public BaseResponse<String> reissue(HttpServletRequest request, HttpServletResponse response) {
+    public BaseResponse<AccessTokenResponseDto> reissue(HttpServletRequest request, HttpServletResponse response) {
         String refresh = null;
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
@@ -34,11 +33,9 @@ public class JwtController {
                 refresh = cookie.getValue();
             }
         }
-        jwtService.verifyRefreshToken(refresh);
-        JwtUserDto jwtUserDto = jwtService.getUserDtoFromToken(refresh, JwtUtil.REFRESH);
-        response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
-        response.addCookie(jwtUtil.rotateRefreshJwtCookie(jwtUserDto, refresh));
+        AccessTokenResponseDto accessTokenResponse = jwtService.reissueAccessToken(refresh);
+        response.addCookie(jwtService.rotateRefreshToken(refresh));
 
-        return new BaseResponse<>(SUCCESS_MESSAGE);
+        return new BaseResponse<>(accessTokenResponse);
     }
 }

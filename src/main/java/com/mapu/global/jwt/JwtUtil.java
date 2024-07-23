@@ -78,11 +78,11 @@ public class JwtUtil {
         return cookie;
     }
 
-    public Cookie createAccessJwtCookie(JwtUserDto jwtUserDto) {
+    public String createAccessToken(JwtUserDto jwtUserDto){
         String name = jwtUserDto.getName().toString();
         String role = jwtUserDto.getRole().toString();
         String token = createJwt(ACCESS, name, role,accessExpiration*1000L);
-        return createCookie(ACCESS, token, accessExpiration);
+        return token;
     }
 
     public Cookie createRefreshJwtCookie(JwtUserDto jwtUserDto) {

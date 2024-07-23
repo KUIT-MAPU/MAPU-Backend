@@ -59,14 +59,9 @@ public class UserService {
             throw new UserException(UserExceptionErrorCode.SIGNUP_FAIL);
         }
 
-        setCookieWithJWT(response,jwtUserDto);
-
-        return new SignUpResponseDTO(imageUrl);
-    }
-
-    private void setCookieWithJWT(HttpServletResponse response, JwtUserDto jwtUserDto) {
-        response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
         response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
+
+        return new SignUpResponseDTO(imageUrl, jwtUtil.createAccessToken(jwtUserDto));
     }
 
     private void checkDuplicateSignUpRequest(String email) {

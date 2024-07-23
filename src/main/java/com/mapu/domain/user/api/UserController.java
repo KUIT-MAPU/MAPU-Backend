@@ -1,23 +1,16 @@
 package com.mapu.domain.user.api;
 
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
-import com.mapu.domain.user.api.request.UserUpdateRequestDTO;
 import com.mapu.domain.user.application.UserService;
 import com.mapu.domain.user.application.response.SignInResponseDTO;
 import com.mapu.domain.user.application.response.SignUpResponseDTO;
 import com.mapu.domain.user.application.response.UserInfoResponseDTO;
-import com.mapu.domain.user.application.response.UserUpdateResponseDTO;
-import com.mapu.domain.user.exception.UserException;
-import com.mapu.domain.user.exception.errorcode.UserExceptionErrorCode;
 import com.mapu.global.common.response.BaseResponse;
 import com.mapu.infra.oauth.application.OAuthService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

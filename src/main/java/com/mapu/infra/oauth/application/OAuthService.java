@@ -40,31 +40,32 @@ public class OAuthService {
         OAuthUserInfo userInfo = getUserInfoFromOAuth(socialLoginType, code);
 
         User user = userRepository.findByEmail(userInfo.getEmail());
-        if(user != null){
-            //로그인 성공
-            try{
-                //jwt 발급하기
-                JwtUserDto jwtUserDto = JwtUserDto.builder()
-                        .name(user.getId())
-                        .role(user.getRole())
-                        .build();
-
-                setCookieWithJWT(response,jwtUserDto);
-            } catch (Exception e){
-                throw new JwtException(JwtExceptionErrorCode.ERROR_IN_JWT);
-            }
-        }else{
+        if (user == null) {
             //회원가입 필요
-            saveUserInfoToSession(session,userInfo);
+            saveUserInfoToSession(session, userInfo);
             throw new UserException(OAuthExceptionErrorCode.NEED_TO_SIGNUP);
         }
 
-        return new SignInResponseDTO(LOGIN_SUCCESS_MESSAGE);
-    }
+        //로그인 성공
+        String accessToken = null;
+        try {
+            //jwt 발급하기
+            JwtUserDto jwtUserDto = JwtUserDto.builder()
+                    .name(user.getId())
+                    .role(user.getRole())
+                    .build();
 
-    private void setCookieWithJWT(HttpServletResponse response, JwtUserDto jwtUserDto) {
-        response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
-        response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
+            accessToken = jwtUtil.createAccessToken(jwtUserDto);
+            response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
+        } catch (Exception e) {
+            throw new JwtException(JwtExceptionErrorCode.ERROR_IN_JWT);
+        }
+
+        if (accessToken == null) {
+            throw new JwtException(JwtExceptionErrorCode.ERROR_IN_JWT);
+        }
+
+        return new SignInResponseDTO(LOGIN_SUCCESS_MESSAGE, accessToken);
     }
 
     private OAuthUserInfo getUserInfoFromOAuth(String socialLoginType, String code) {
