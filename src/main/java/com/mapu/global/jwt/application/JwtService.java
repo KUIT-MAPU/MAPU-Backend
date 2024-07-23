@@ -2,6 +2,7 @@ package com.mapu.global.jwt.application;
 
 import com.mapu.domain.user.domain.UserRole;
 import com.mapu.global.jwt.JwtUtil;
+import com.mapu.global.jwt.dao.JwtRedisRepository;
 import com.mapu.global.jwt.dto.JwtUserDto;
 import com.mapu.global.jwt.exception.JwtException;
 import com.mapu.global.jwt.exception.errorcode.JwtExceptionErrorCode;
@@ -13,12 +14,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
     private final JwtUtil jwtUtil;
+    private final JwtRedisRepository jwtRedisRepository;
 
     private void checkToken(String token, String tokenType) {
         if (token == null) {
             //response status code
             JwtExceptionErrorCode errorCode = JwtExceptionErrorCode.NO_JWT_TOKEN_IN_COOKIE;
-            errorCode.setMessage(String.format("%s token is null", tokenType));
+            errorCode.addTokenTypeInfoToMessage(tokenType);
             throw new JwtException(errorCode);
         }
 
@@ -27,7 +29,7 @@ public class JwtService {
             jwtUtil.isExpired(token);
         } catch (ExpiredJwtException e) {
             JwtExceptionErrorCode errorCode = JwtExceptionErrorCode.EXPIRED_JWT_TOKEN;
-            errorCode.setMessage(String.format("%s token is expired", tokenType));
+            errorCode.addTokenTypeInfoToMessage(tokenType);
             throw new JwtException(errorCode);
         }
 
@@ -35,7 +37,7 @@ public class JwtService {
         String category = jwtUtil.getCategory(token);
         if (!category.equals(tokenType)) {
             JwtExceptionErrorCode errorCode = JwtExceptionErrorCode.INVALID_JWT_TOKEN;
-            errorCode.setMessage(String.format("invalid %s token", tokenType));
+            errorCode.addTokenTypeInfoToMessage(tokenType);
             throw new JwtException(errorCode);
         }
     }
@@ -46,5 +48,12 @@ public class JwtService {
                 .role(UserRole.valueOf(jwtUtil.getRole(token)))
                 .build();
         return jwtUserDto;
+    }
+
+    public void verifyRefreshToken(String token) {
+        checkToken(token, jwtUtil.REFRESH);
+        if(!jwtRedisRepository.existsById(token)) {
+            throw new JwtException(JwtExceptionErrorCode.UNKNOWN_REFRESH_TOKEN);
+        }
     }
 }

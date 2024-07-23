@@ -1,8 +1,6 @@
 package com.mapu.global.jwt.exception.errorcode;
 
 import com.mapu.global.common.response.status.ResponseStatus;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 public enum JwtExceptionErrorCode implements ResponseStatus {
@@ -11,16 +9,10 @@ public enum JwtExceptionErrorCode implements ResponseStatus {
      * 7000: JWT 오류
      */
     ERROR_IN_JWT(7000, HttpStatus.INTERNAL_SERVER_ERROR.value(), "JWT 토큰 발급 중 오류가 발생했습니다."),
-    NO_JWT_TOKEN_IN_COOKIE(7001, HttpStatus.BAD_REQUEST.value()),
-    EXPIRED_JWT_TOKEN(7002, HttpStatus.BAD_REQUEST.value()),
-    INVALID_JWT_TOKEN(7003,HttpStatus.BAD_REQUEST.value());
-
-
-    JwtExceptionErrorCode(int code, int status) {
-        this.code = code;
-        this.status = status;
-        this.message = "";
-    }
+    NO_JWT_TOKEN_IN_COOKIE(7001, HttpStatus.BAD_REQUEST.value(), "쿠키에 JWT 토큰이 없습니다."),
+    EXPIRED_JWT_TOKEN(7002, HttpStatus.BAD_REQUEST.value(), "만료된 JWT 토큰입니다."),
+    INVALID_JWT_TOKEN(7003,HttpStatus.BAD_REQUEST.value(), "유효하지 않은 JWT 토큰입니다."),
+    UNKNOWN_REFRESH_TOKEN(7004, HttpStatus.BAD_REQUEST.value(), "서버에 등록되어 있지 않은 refresh JWT 토큰입니다.");
 
     JwtExceptionErrorCode(int code, int status, String message) {
         this.code = code;
@@ -47,5 +39,5 @@ public enum JwtExceptionErrorCode implements ResponseStatus {
         return message;
     }
 
-    public void setMessage(String message) { this.message = message; }
+    public void addTokenTypeInfoToMessage(String tokenType) { this.message = this.message + " (" + tokenType + ")"; }
 }

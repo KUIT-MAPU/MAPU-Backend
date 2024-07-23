@@ -34,10 +34,10 @@ public class JwtController {
                 refresh = cookie.getValue();
             }
         }
-
+        jwtService.verifyRefreshToken(refresh);
         JwtUserDto jwtUserDto = jwtService.getUserDtoFromToken(refresh, JwtUtil.REFRESH);
         response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
-        response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
+        response.addCookie(jwtUtil.rotateRefreshJwtCookie(jwtUserDto, refresh));
 
         return new BaseResponse<>(SUCCESS_MESSAGE);
     }
