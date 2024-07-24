@@ -1,5 +1,6 @@
 package com.mapu.global.jwt.dto;
 
+import com.mapu.domain.user.domain.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,8 +14,8 @@ import java.util.Map;
 @Getter
 @Setter
 public class JwtUserDto implements AuthenticatedPrincipal {
-    private String role;
-    private String name;
+    private UserRole role;
+    private Long name;
 
     public Map<String, Object> getAttributes() {
         return null;
@@ -22,13 +23,18 @@ public class JwtUserDto implements AuthenticatedPrincipal {
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add((GrantedAuthority) () -> role);
+        collection.add((GrantedAuthority) () -> role.toString());
         return collection;
     }
 
     @Builder
-    public JwtUserDto(String role, String name) {
+    public JwtUserDto(UserRole role, Long name) {
         this.role = role;
         this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return String.valueOf(this.name);
     }
 }

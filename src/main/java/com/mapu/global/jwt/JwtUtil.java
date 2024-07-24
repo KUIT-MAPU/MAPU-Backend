@@ -69,7 +69,6 @@ public class JwtUtil {
     }
 
     private Cookie createCookie(String key, String value, int maxAge) {
-
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(maxAge);
         //cookie.setSecure(true); //TODO https로 전환 후에 주석 해제
@@ -79,14 +78,21 @@ public class JwtUtil {
         return cookie;
     }
 
-    public Cookie createAccessJwtCookie(JwtUserDto jwtUserDto) {
-        return createCookie(ACCESS, createJwt(ACCESS, jwtUserDto.getName(), jwtUserDto.getRole(),
-                accessExpiration*1000L), accessExpiration);
+    public String createAccessToken(JwtUserDto jwtUserDto){
+        String name = jwtUserDto.getName();
+        String role = jwtUserDto.getRole().toString();
+        return createJwt(ACCESS, name, role,accessExpiration*1000L);
+    }
+
+    public String createRefreshToken(JwtUserDto jwtUserDto) {
+        String name = jwtUserDto.getName();
+        String role = jwtUserDto.getRole().toString();
+        return createJwt(REFRESH, name, role, refreshExpiration*1000L);
     }
 
     public Cookie createRefreshJwtCookie(JwtUserDto jwtUserDto) {
-        String token = createJwt(REFRESH, jwtUserDto.getName(), jwtUserDto.getRole(), refreshExpiration*1000L);
-        jwtRedisRepository.save(new JwtRedis(jwtUserDto.getName(), token, refreshExpiration));
+        String token = createRefreshToken(jwtUserDto);
+        jwtRedisRepository.save(new JwtRedis(token, refreshExpiration));
         return createCookie(REFRESH, token, refreshExpiration);
     }
 }

@@ -13,9 +13,6 @@ import org.springframework.data.redis.core.index.Indexed;
 @RedisHash(value = "refreshToken")
 public class JwtRedis extends BaseEntity {
     @Id
-    private String uid;
-
-    @Indexed
     private String tokenValue;
 
     @TimeToLive

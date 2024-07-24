@@ -1,8 +1,8 @@
 package com.mapu.global.common.config;
 
-import com.mapu.global.jwt.JwtFilter;
+import com.mapu.global.jwt.filter.JwtFilter;
+import com.mapu.global.jwt.filter.JwtLogoutFilter;
 import com.mapu.global.jwt.application.JwtService;
-import com.mapu.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,13 +11,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtUtil jwtUtil;
     private final JwtService jwtService;
 
     @Bean
@@ -35,10 +36,10 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
-
         //JWTFilter 추가
         http
-                .addFilterBefore(new JwtFilter(jwtUtil, jwtService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(new JwtLogoutFilter(jwtService), LogoutFilter.class);
 
         //oauth2 -> 필요없음
 //        http
@@ -47,10 +48,10 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/user/signin/**").permitAll()
-                        .requestMatchers("/user/signup/**").permitAll()
-                        .requestMatchers("/reissue").permitAll()
-                        .requestMatchers("/error").permitAll());
+                        .requestMatchers("/user/signin/**", "/user/signup/**").permitAll()
+                        .requestMatchers("/jwt/reissue").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
         http

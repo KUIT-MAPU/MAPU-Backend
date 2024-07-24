@@ -1,7 +1,7 @@
 package com.mapu.domain.user.application;
 
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
-import com.mapu.domain.user.application.response.SignUpResponseDTO;
+import com.mapu.domain.user.application.response.SignInUpResponseDTO;
 import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
 import com.mapu.domain.user.domain.UserRole;
@@ -13,7 +13,6 @@ import com.mapu.infra.oauth.dao.OAuthRepository;
 import com.mapu.infra.oauth.domain.OAuth;
 import com.mapu.infra.oauth.domain.OAuthUserInfo;
 import com.mapu.infra.s3.application.S3Service;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class UserService {
     private final S3Service s3Service;
     private final JwtUtil jwtUtil;
 
-    public SignUpResponseDTO signUp(SignUpRequestDTO signUpRequestDTO, MultipartFile imageFile, HttpSession session, HttpServletResponse response) throws IOException {
+    public SignInUpResponseDTO signUp(SignUpRequestDTO signUpRequestDTO, MultipartFile imageFile, HttpSession session, HttpServletResponse response) throws IOException {
         //세션으로부터 사용자 정보 받아오기
         OAuthUserInfo userInfo = getUserInfoFromSession(session);
         //이미 회원가입된 상태인지 확인하기
@@ -48,19 +47,25 @@ public class UserService {
         //세션 정보 삭제하기
         removeSessionData(session);
         //jwt 발급하기
-        JwtUserDto jwtUserDto = JwtUserDto.builder()
-                .name(userInfo.getEmail())
-                .role(UserRole.USER.toString())
+        User user = userRepository.findByEmail(userInfo.getEmail());
+        JwtUserDto jwtUserDto = null;
+        try {
+            jwtUserDto = JwtUserDto.builder()
+                    .name(user.getId())
+                    .role(user.getRole())
+                    .build();
+        } catch (Exception e) {
+            throw new UserException(UserExceptionErrorCode.SIGNUP_FAIL);
+        }
+
+        response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
+        SignInUpResponseDTO responseDTO = SignInUpResponseDTO.builder()
+                .imgUrl(imageUrl)
+                .profileId(signUpRequestDTO.getProfileId())
+                .accessToken(jwtUtil.createAccessToken(jwtUserDto))
                 .build();
 
-        setCookieWithJWT(response,jwtUserDto);
-
-        return new SignUpResponseDTO(imageUrl);
-    }
-
-    private void setCookieWithJWT(HttpServletResponse response, JwtUserDto jwtUserDto) {
-        response.addCookie(jwtUtil.createAccessJwtCookie(jwtUserDto));
-        response.addCookie(jwtUtil.createRefreshJwtCookie(jwtUserDto));
+        return responseDTO;
     }
 
     private void checkDuplicateSignUpRequest(String email) {
@@ -81,7 +86,7 @@ public class UserService {
                 .image(imageUrl)
                 .nickname(signUpRequestDTO.getNickname())
                 .profileId(signUpRequestDTO.getProfileId())
-                .role("USER")
+                .role(UserRole.USER)
                 .status("ACTIVE")
                         .build();
 
@@ -105,21 +110,15 @@ public class UserService {
         if(session==null){
             throw new UserException(UserExceptionErrorCode.NO_SESSION);
         }
-        OAuthUserInfo userInfo = OAuthUserInfo.builder()
-                .socialId(session.getAttribute("platform_id").toString())
-                .socialProvider(session.getAttribute("platform_name").toString())
-                .email(session.getAttribute("email").toString())
-                .build();
-        isExistInfoInSession(userInfo);
+        try{
+            OAuthUserInfo userInfo = OAuthUserInfo.builder()
+                    .socialId(session.getAttribute("platform_id").toString())
+                    .socialProvider(session.getAttribute("platform_name").toString())
+                    .email(session.getAttribute("email").toString())
+                    .build();
 
-        return userInfo;
-    }
-
-    private void isExistInfoInSession(OAuthUserInfo userInfo) {
-        //세션에 값이 있는지 확인
-        if (userInfo.getEmail() == null ||
-                userInfo.getSocialId() == null ||
-                userInfo.getSocialProvider() ==null) {
+            return userInfo;
+        } catch (Exception e){
             throw new UserException(UserExceptionErrorCode.NO_INFO_IN_SESSION);
         }
     }

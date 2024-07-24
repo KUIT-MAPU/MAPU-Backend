@@ -19,10 +19,4 @@ public class UserExceptionHandler {
         log.error("[UserException: handle_UserException 호출]", e);
         return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
     }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public BaseErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-        log.error("[MethodArgumentNotValidException: handle_MethodArgumentNotValidException 호출]", e);
-        return new BaseErrorResponse(e.getMessage());
-    }
 }
