@@ -3,6 +3,8 @@ package com.mapu.infra.oauth.kakao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mapu.infra.oauth.config.OAuthClientConfig;
+import com.mapu.infra.oauth.exception.OAuthException;
+import com.mapu.infra.oauth.exception.errorcode.OAuthExceptionErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,19 +51,18 @@ public class KakaoUserService {
         try {
             kakaoToken = objectMapper.readValue(response, KakaoToken.class);
         } catch (JsonProcessingException e) {
-            log.error("json processing error", e);
-            e.printStackTrace();
+            throw new OAuthException(OAuthExceptionErrorCode.GET_TOKEN_FAIL);
         }
 
         return kakaoToken;
     }
-    public KakaoUserInfo requestKakaoUserInfo(String token) {
+    public KakaoUserInfo requestKakaoUserInfo(KakaoToken kakaoToken) throws JsonProcessingException {
 
         //Http 요청
         WebClient wc = WebClient.create(UserInfoUri);
         String response = wc.post()
                 .uri(UserInfoUri)
-                .header("Authorization", "Bearer " + token)
+                .header("Authorization", "Bearer " + kakaoToken.getAccess_token())
                 .header("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
                 .retrieve()
                 .bodyToMono(String.class)
@@ -70,37 +71,7 @@ public class KakaoUserService {
         ObjectMapper objectMapper = new ObjectMapper();
         KakaoUserInfo kakaoUserInfo = null;
 
-        try {
-            kakaoUserInfo = objectMapper.readValue(response, KakaoUserInfo.class);
-        } catch (JsonProcessingException e) {
-            log.error("json processing error", e);
-            e.printStackTrace();
-        }
+        kakaoUserInfo = objectMapper.readValue(response, KakaoUserInfo.class);
         return kakaoUserInfo;
     }
-
-    // 소은이가 하는 부분
-//    @Transactional
-//    public User saveUser(String access_token) {
-//        KakaoUserInfo kakaoUserInfo = findKakaoUser(access_token); //사용자 정보 받아오기
-//         User user = userRepository.findByUserid(kakaoUserInfo.getId());
-//
-//        //처음이용자 강제 회원가입
-//        if(user ==null) {
-//            user = User.builder()
-//                    .userid(kakaoUserInfo.getId())
-//                    .password(null) //필요없으니 일단 아무거도 안넣음. 원하는데로 넣으면 됌
-//                    .nickname(kakaoUserInfo.getKakao_account().getProfile().getNickname())
-//                    .profileImg(kakaoUserInfo.getKakao_account().getProfile().getProfile_image_url())
-//                    .email(kakaoUserInfo.getKakao_account().getEmail())
-//                    .roles("USER")
-//                    .createTime(LocalDateTime.now())
-//                    .provider("Kakao")
-//                    .build();
-//
-//            userRepository.save(user);
-//        }
-//
-//        return user;
-//    }
 }
