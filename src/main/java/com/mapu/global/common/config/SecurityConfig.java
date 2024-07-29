@@ -1,5 +1,7 @@
 package com.mapu.global.common.config;
 
+import com.mapu.global.jwt.JwtUtil;
+import com.mapu.global.jwt.filter.JwtExceptionFilter;
 import com.mapu.global.jwt.filter.JwtFilter;
 import com.mapu.global.jwt.filter.JwtLogoutFilter;
 import com.mapu.global.jwt.application.JwtService;
@@ -18,12 +20,10 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
+    private final JwtUtil jwtUtil;
     private final JwtService jwtService;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         //csrf disable
         http
                 .csrf((auth) -> auth.disable());
@@ -38,7 +38,8 @@ public class SecurityConfig {
 
         //JWTFilter 추가
         http
-                .addFilterBefore(new JwtFilter(jwtService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(jwtService,jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class )
                 .addFilterAt(new JwtLogoutFilter(jwtService), LogoutFilter.class);
 
         //oauth2 -> 필요없음
