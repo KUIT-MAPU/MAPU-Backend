@@ -70,6 +70,8 @@ dependencies {
 	testImplementation 'com.h2database:h2'
 
 
+	implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
+
 }
 
 tasks.named('test') {
