@@ -8,7 +8,7 @@ spring:
   jwt:
     secret: ${JWT_SECRET}
     token:
-      access-expiration-time: 600 #10min
+      access-expiration-time: 3600 #1hour
       refresh-expiration-time: 86400 #24hour
 
 ---
@@ -21,7 +21,7 @@ spring:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: email
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "http://localhost:3000/google/callback"
             authorization-grant-type: authorization_code
             client-name: Google
           kakao:
