@@ -1,6 +1,7 @@
 package com.mapu.domain.user.application;
 
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
+import com.mapu.domain.user.api.request.UserUpdateRequestDTO;
 import com.mapu.domain.user.application.response.SignInUpResponseDTO;
 import com.mapu.domain.user.application.response.UserInfoResponseDTO;
 import com.mapu.domain.user.dao.UserRepository;
@@ -153,5 +154,20 @@ public class UserService {
                 .build();
 
         return response;
+    }
+
+    public void updateUser(long userId, UserUpdateRequestDTO request, MultipartFile image) throws IOException {
+        Optional<User> user = userRepository.findById(userId);
+        if(user==null) throw new UserException(UserExceptionErrorCode.INVALID_USERID);
+
+        User findUser = user.get();
+
+        findUser.setNickname(request.getNickname());
+        findUser.setProfileId(request.getProfileId());
+        if(image.isEmpty()) findUser.setImage(null);
+        else {
+            String imageUrl = uploadImage(image);
+            findUser.setImage(imageUrl);
+        }
     }
 }

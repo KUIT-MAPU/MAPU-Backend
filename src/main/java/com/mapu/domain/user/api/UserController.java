@@ -1,6 +1,7 @@
 package com.mapu.domain.user.api;
 
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
+import com.mapu.domain.user.api.request.UserUpdateRequestDTO;
 import com.mapu.domain.user.application.UserService;
 import com.mapu.domain.user.application.response.SignInUpResponseDTO;
 import com.mapu.domain.user.application.response.UserInfoResponseDTO;
@@ -68,19 +69,12 @@ public class UserController {
     /**
      * 유저데이터 수정 API
      */
-//    @PostMapping
-//    public BaseResponse<UserUpdateResponseDTO> updateUserInfo(@RequestBody @Validated UserUpdateRequestDTO request,
-//                                                              MultipartFile image){
-//        //ContextHolder로부터 userId 받기
-//
-//        UserUpdateResponseDTO response= userService.updateUser();
-//        return new BaseResponse<>(response);
-//    }
-//}
-
-//    @GetMapping("/logout")
-//    public BaseResponse<Object> logout() {
-//
-//    }
+    @PostMapping
+    public BaseResponse updateUserInfo(@AuthenticationPrincipal JwtUserDto jwtUserDto,
+                                               @Validated @RequestPart("requestDTO") UserUpdateRequestDTO request,
+                                               @RequestPart("imageFile") MultipartFile image) throws IOException {
+        userService.updateUser(Long.parseLong(jwtUserDto.getName()), request, image);
+        return new BaseResponse<>();
+    }
 
 }
