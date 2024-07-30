@@ -19,9 +19,11 @@ public class JwtService {
     private final JwtRedisRepository jwtRedisRepository;
 
     private void checkToken(String token, String tokenType) {
+        //refresh token 검증용! accesstoken은 jwtfilter에서 검증
+
         if (token == null) {
             //response status code
-            JwtExceptionErrorCode errorCode = JwtExceptionErrorCode.NO_JWT_TOKEN_IN_COOKIE;
+            JwtExceptionErrorCode errorCode = JwtExceptionErrorCode.NO_JWT_TOKEN_IN_HEADER;
             errorCode.addTokenTypeInfoToMessage(tokenType);
             throw new JwtException(errorCode);
         }

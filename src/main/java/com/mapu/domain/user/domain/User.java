@@ -24,6 +24,7 @@ public class User extends BaseEntity {
     private String email;
 
     @NotNull(message = "역할은 필수입니다.")
+    @Enumerated(value = EnumType.STRING)
     @Column(nullable = false, length = 10)
     private UserRole role;
 
