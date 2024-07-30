@@ -2,9 +2,9 @@ package com.mapu.domain.follow.api;
 
 import com.mapu.domain.follow.api.request.FollowRequestDTO;
 import com.mapu.domain.follow.application.FollowService;
-import com.mapu.domain.follow.application.response.FollowResponseDTO;
 import com.mapu.domain.follow.application.response.FollowListResponseDTO;
 import com.mapu.global.common.response.BaseResponse;
+import com.mapu.global.jwt.dto.JwtUserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/follow")
 @RequiredArgsConstructor
 public class FollowController {
     private final FollowService followService;
@@ -22,12 +21,14 @@ public class FollowController {
      * followerId 나
      * followingId 팔로우할 대상
      */
+    @RequestMapping("/follow")
     @PostMapping
-    public BaseResponse<FollowResponseDTO> followUser(@AuthenticationPrincipal Long followerId,
+    public BaseResponse<Void> followUser(@AuthenticationPrincipal JwtUserDto jwtUserDto,
                                                       @RequestBody FollowRequestDTO followRequestDTO) {
-        System.out.println("sss"+followerId);
-        FollowResponseDTO response = followService.followUser(followerId, followRequestDTO.getFollowingId());
-        return new BaseResponse<>(response);
+        Long followerId = Long.parseLong(jwtUserDto.getName());
+        followService.followUser(followerId, followRequestDTO.getFollowingId());
+
+        return new BaseResponse<>(null);
     }
 
     /**
@@ -35,19 +36,23 @@ public class FollowController {
      * followerId 나
      * followingId 언팔로우할 대상
      */
-    @DeleteMapping
-    public BaseResponse<FollowResponseDTO> unfollowUser(@AuthenticationPrincipal Long followerId,
+    @RequestMapping("/unfollow")
+    @PostMapping
+    public BaseResponse<Void> unfollowUser(@AuthenticationPrincipal JwtUserDto jwtUserDto,
                                                         @RequestBody FollowRequestDTO followRequestDTO) {
-        FollowResponseDTO response = followService.unfollowUser(followerId, followRequestDTO.getFollowingId());
-        return new BaseResponse<>(response);
+        String followerId = jwtUserDto.getName();
+        followService.unfollowUser(Long.parseLong(followerId), followRequestDTO.getFollowingId());
+        return new BaseResponse<>(null);
     }
 
     /**
      * 팔로워 목록 조회 API
      * userId 팔로워 목록을 조회할 사용자의 ID
      */
-    @GetMapping("/followers/{userId}")
-    public BaseResponse<FollowListResponseDTO> getFollowers(@PathVariable Long userId) {
+    @RequestMapping("/follower")
+    @GetMapping
+    public BaseResponse<FollowListResponseDTO> getFollowers(@AuthenticationPrincipal JwtUserDto jwtUserDto) {
+        Long userId = Long.parseLong(jwtUserDto.getName());
         FollowListResponseDTO response = followService.getFollowers(userId);
         return new BaseResponse<>(response);
     }
@@ -56,8 +61,10 @@ public class FollowController {
      * 팔로잉 목록 조회 API
      *  userId 팔로잉 목록을 조회할 사용자의 ID
      */
-    @GetMapping("/following/{userId}")
-    public BaseResponse<FollowListResponseDTO> getFollowing(@PathVariable Long userId) {
+    @RequestMapping("/following")
+    @GetMapping
+    public BaseResponse<FollowListResponseDTO> getFollowing(@AuthenticationPrincipal JwtUserDto jwtUserDto) {
+        Long userId = Long.parseLong(jwtUserDto.getName());
         FollowListResponseDTO response = followService.getFollowing(userId);
         return new BaseResponse<>(response);
     }

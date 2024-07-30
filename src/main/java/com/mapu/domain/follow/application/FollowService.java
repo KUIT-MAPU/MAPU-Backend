@@ -1,6 +1,5 @@
 package com.mapu.domain.follow.application;
 
-import com.mapu.domain.follow.application.response.FollowResponseDTO;
 import com.mapu.domain.follow.application.response.FollowListResponseDTO;
 import com.mapu.domain.follow.application.response.FollowUserDTO;
 import com.mapu.domain.follow.dao.FollowRepository;
@@ -27,8 +26,14 @@ public class FollowService {
 
     /**
      * 유저 팔로우 API 서비스
+     * 유저 팔로우 API 서비스
      */
-    public FollowResponseDTO followUser(Long followerId, Long followingId) {
+    public void followUser(Long followerId, Long followingId) {
+        // 팔로워와 팔로잉 ID가 같으면 예외 발생
+        if (followerId.equals(followingId)) {
+            throw new FollowException(FollowExceptionErrorCode.SELF_FOLLOW_NOT_ALLOWED);
+        }
+
         User follower = getUserById(followerId);
         User following = getUserById(followingId);
 
@@ -41,17 +46,17 @@ public class FollowService {
                 .following(following)
                 .build();
         followRepository.save(follow);
-
-        return FollowResponseDTO.builder()
-                .userId(followingId)
-                .isFollowing(true)
-                .build();
     }
 
     /**
      * 언팔로우 API 서비스
      */
-    public FollowResponseDTO unfollowUser(Long followerId, Long followingId) {
+    public void unfollowUser(Long followerId, Long followingId) {
+        // 팔로워와 팔로잉 ID가 같을 때
+        if (followerId.equals(followingId)) {
+            throw new FollowException(FollowExceptionErrorCode.SELF_UNFOLLOW_NOT_ALLOWED);
+        }
+
         User follower = getUserById(followerId);
         User following = getUserById(followingId);
 
@@ -59,11 +64,6 @@ public class FollowService {
                 .orElseThrow(() -> new FollowException(FollowExceptionErrorCode.NOT_FOLLOWING));
 
         followRepository.delete(follow);
-
-        return FollowResponseDTO.builder()
-                .userId(followingId)
-                .isFollowing(false)
-                .build();
     }
 
     /**
