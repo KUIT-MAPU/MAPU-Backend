@@ -2,6 +2,7 @@ package com.mapu.domain.user.application;
 
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
 import com.mapu.domain.user.application.response.SignInUpResponseDTO;
+import com.mapu.domain.user.application.response.UserInfoResponseDTO;
 import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
 import com.mapu.domain.user.domain.UserRole;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -134,4 +136,22 @@ public class UserService {
         }
     }
 
+    public UserInfoResponseDTO getUserInfo(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if(user==null) throw new UserException(UserExceptionErrorCode.INVALID_USERID);
+
+        User findUser = user.get();
+
+        //TODO: Map, Follow 테이블 생성 후 데이터 추가 필요
+        UserInfoResponseDTO response = UserInfoResponseDTO
+                .builder().nickname(findUser.getNickname())
+                .profileId(findUser.getProfileId())
+                .imgUrl(findUser.getImage())
+                .mapCnt(0)
+                .followerCnt(0)
+                .followingCnt(0)
+                .build();
+
+        return response;
+    }
 }
