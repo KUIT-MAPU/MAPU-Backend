@@ -11,12 +11,11 @@ import org.hibernate.annotations.DynamicInsert;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @DynamicInsert
 public class Follow extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //autoincrement
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,5 +26,9 @@ public class Follow extends BaseEntity {
     @JoinColumn(name = "following_user_id")
     private User following;
 
-
+    @Builder
+    public Follow(User follower, User following) {
+        this.follower = follower;
+        this.following = following;
+    }
 }

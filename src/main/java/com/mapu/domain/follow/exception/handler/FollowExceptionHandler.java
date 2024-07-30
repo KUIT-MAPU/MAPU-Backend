@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class FollowExceptionHandler {
     @ExceptionHandler(value = {FollowException.class})
     public BaseErrorResponse handleException(FollowException e) {
-        log.error("[UserException: handle_UserException 호출]",e);
+        log.error("[Follow Exception: handle_UserException 호출]",e);
         return new BaseErrorResponse(e.getExceptionStatus(),e.getMessage());
     }
 }

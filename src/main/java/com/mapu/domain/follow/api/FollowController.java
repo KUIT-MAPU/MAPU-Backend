@@ -1,5 +1,6 @@
 package com.mapu.domain.follow.api;
 
+import com.mapu.domain.follow.api.request.FollowRequestDTO;
 import com.mapu.domain.follow.application.FollowService;
 import com.mapu.domain.follow.application.response.FollowResponseDTO;
 import com.mapu.domain.follow.application.response.FollowListResponseDTO;
@@ -16,32 +17,34 @@ import org.springframework.web.bind.annotation.*;
 public class FollowController {
     private final FollowService followService;
 
-    // @AuthenticationPrincipal: 현재 인증된 사용자의 ID를 주입?
-    // @PathVariable: URL 경로에서 변수 값을 추출
-
     /**
      * 유저 팔로우 API
-     * @param followerId 사용자의 ID  => 나
-     * @param userId 팔로우할 대상 사용자의 ID
+     * followerId 나
+     * followingId 팔로우할 대상
      */
-    @PostMapping("/{userId}")
+    @PostMapping
     public BaseResponse<FollowResponseDTO> followUser(@AuthenticationPrincipal Long followerId,
-                                                      @PathVariable Long userId) {
-        FollowResponseDTO response = followService.followUser(followerId, userId);
+                                                      @RequestBody FollowRequestDTO followRequestDTO) {
+        System.out.println("sss"+followerId);
+        FollowResponseDTO response = followService.followUser(followerId, followRequestDTO.getFollowingId());
         return new BaseResponse<>(response);
     }
 
     /**
      * 유저 언팔로우 API
+     * followerId 나
+     * followingId 언팔로우할 대상
      */
-    @DeleteMapping("/{userId}")
+    @DeleteMapping
     public BaseResponse<FollowResponseDTO> unfollowUser(@AuthenticationPrincipal Long followerId,
-                                                        @PathVariable Long userId) {
-        FollowResponseDTO response = followService.unfollowUser(followerId, userId);
+                                                        @RequestBody FollowRequestDTO followRequestDTO) {
+        FollowResponseDTO response = followService.unfollowUser(followerId, followRequestDTO.getFollowingId());
         return new BaseResponse<>(response);
     }
+
     /**
      * 팔로워 목록 조회 API
+     * userId 팔로워 목록을 조회할 사용자의 ID
      */
     @GetMapping("/followers/{userId}")
     public BaseResponse<FollowListResponseDTO> getFollowers(@PathVariable Long userId) {
@@ -51,6 +54,7 @@ public class FollowController {
 
     /**
      * 팔로잉 목록 조회 API
+     *  userId 팔로잉 목록을 조회할 사용자의 ID
      */
     @GetMapping("/following/{userId}")
     public BaseResponse<FollowListResponseDTO> getFollowing(@PathVariable Long userId) {
@@ -58,3 +62,4 @@ public class FollowController {
         return new BaseResponse<>(response);
     }
 }
+
