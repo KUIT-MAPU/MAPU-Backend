@@ -4,7 +4,6 @@ import com.mapu.domain.user.api.request.SignUpRequestDTO;
 import com.mapu.domain.user.api.request.UserUpdateRequestDTO;
 import com.mapu.domain.user.application.UserService;
 import com.mapu.domain.user.application.response.SignInUpResponseDTO;
-import com.mapu.domain.user.application.response.UserDeleteResponseDTO;
 import com.mapu.domain.user.application.response.UserInfoResponseDTO;
 import com.mapu.global.common.response.BaseResponse;
 import com.mapu.global.jwt.dto.JwtUserDto;
@@ -78,9 +77,12 @@ public class UserController {
         return new BaseResponse<>();
     }
 
+    /**
+     * 유저데이터 삭제 API
+     */
     @PostMapping("/delete")
-    public BaseResponse deleteUser(HttpServletRequest httpServletRequest, @RequestParam("email") String deleteUserEmail) {
-        userService.deleteUser(httpServletRequest, deleteUserEmail);
+    public BaseResponse deleteUser(HttpServletRequest httpServletRequest, @RequestParam("id") long deleteUserId) {
+        userService.deleteUser(httpServletRequest, deleteUserId);
         return new BaseResponse<>();
     }
 }

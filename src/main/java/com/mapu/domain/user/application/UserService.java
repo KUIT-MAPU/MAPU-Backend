@@ -15,7 +15,6 @@ import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
 import com.mapu.global.jwt.JwtUtil;
 import com.mapu.global.jwt.application.JwtService;
 import com.mapu.global.jwt.dto.JwtUserDto;
-import com.mapu.global.jwt.filter.handler.JwtLogoutHandler;
 import com.mapu.infra.oauth.dao.OAuthRepository;
 import com.mapu.infra.oauth.domain.OAuth;
 import com.mapu.infra.oauth.domain.OAuthUserInfo;
@@ -145,8 +144,8 @@ public class UserService {
         }
     }
 
-    public void deleteUser(HttpServletRequest request, String deleteUserEmail) {
-        User user = userRepository.findByEmail(deleteUserEmail);
+    public void deleteUser(HttpServletRequest request, long deleteUserId) {
+        User user = userRepository.findById(deleteUserId);
         logoutUser(request);
         // userRepository.delete(user); // Option1: 완전 삭제
         user.setStatus(String.valueOf(UserStatus.DELETE)); // Option2: 상태 변경
@@ -187,17 +186,15 @@ public class UserService {
     }
 
     public void updateUser(long userId, UserUpdateRequestDTO request, MultipartFile image) throws IOException {
-        Optional<User> user = userRepository.findById(userId);
+        User user = userRepository.findById(userId);
         if(user==null) throw new UserException(UserExceptionErrorCode.INVALID_USERID);
 
-        User findUser = user.get();
-
-        findUser.setNickname(request.getNickname());
-        findUser.setProfileId(request.getProfileId());
-        if(image.isEmpty()) findUser.setImage(null);
+        user.setNickname(request.getNickname());
+        user.setProfileId(request.getProfileId());
+        if(image.isEmpty()) user.setImage(null);
         else {
             String imageUrl = uploadImage(image);
-            findUser.setImage(imageUrl);
+            user.setImage(imageUrl);
         }
     }
 }
