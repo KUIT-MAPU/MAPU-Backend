@@ -79,8 +79,8 @@ public class UserController {
     }
 
     @PostMapping("/delete")
-    public BaseResponse<UserDeleteResponseDTO> deleteUser(HttpServletRequest httpServletRequest, @RequestParam("email") String deleteUserEmail) {
-        UserDeleteResponseDTO response = userService.deleteUser(httpServletRequest, deleteUserEmail);
-        return new BaseResponse<>(response);
+    public BaseResponse deleteUser(HttpServletRequest httpServletRequest, @RequestParam("email") String deleteUserEmail) {
+        userService.deleteUser(httpServletRequest, deleteUserEmail);
+        return new BaseResponse<>();
     }
 }

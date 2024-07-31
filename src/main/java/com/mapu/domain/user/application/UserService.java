@@ -3,11 +3,7 @@ package com.mapu.domain.user.application;
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
 import com.mapu.domain.user.api.request.UserUpdateRequestDTO;
 import com.mapu.domain.user.application.response.SignInUpResponseDTO;
-<<<<<<< HEAD
-import com.mapu.domain.user.application.response.UserDeleteResponseDTO;
-=======
 import com.mapu.domain.user.application.response.UserInfoResponseDTO;
->>>>>>> 9e21243e77c438138aff493dd761832e4c53baae
 import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
 import com.mapu.domain.user.domain.UserRole;
@@ -149,14 +145,12 @@ public class UserService {
         }
     }
 
-<<<<<<< HEAD
-    public UserDeleteResponseDTO deleteUser(HttpServletRequest request, String deleteUserEmail) {
+    public void deleteUser(HttpServletRequest request, String deleteUserEmail) {
         User user = userRepository.findByEmail(deleteUserEmail);
         logoutUser(request);
         // userRepository.delete(user); // Option1: 완전 삭제
         user.setStatus(String.valueOf(UserStatus.DELETE)); // Option2: 상태 변경
         userRepository.save(user);
-        // kakao, google 연결해제
     }
 
     public void logoutUser(HttpServletRequest request) {
@@ -171,7 +165,8 @@ public class UserService {
             }
         }
         jwtService.deleteRefreshJwt(refresh);
-=======
+    }
+
     public UserInfoResponseDTO getUserInfo(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if(user==null) throw new UserException(UserExceptionErrorCode.INVALID_USERID);
@@ -204,6 +199,5 @@ public class UserService {
             String imageUrl = uploadImage(image);
             findUser.setImage(imageUrl);
         }
->>>>>>> 9e21243e77c438138aff493dd761832e4c53baae
     }
 }
