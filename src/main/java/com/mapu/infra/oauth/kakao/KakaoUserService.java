@@ -24,6 +24,7 @@ public class KakaoUserService {
 
     private final String accessTokenUri = "https://kauth.kakao.com/oauth/token";
     private final String UserInfoUri = "https://kapi.kakao.com/v2/user/me";
+    private final String UnlinkUserInfoUri = "https://kapi.kakao.com";
 
     public KakaoToken getAccessToken(String code) {
         //요청 param (body)
@@ -73,5 +74,21 @@ public class KakaoUserService {
 
         kakaoUserInfo = objectMapper.readValue(response, KakaoUserInfo.class);
         return kakaoUserInfo;
+    }
+
+    public void unlinkUserInfo(long deleteOAuthId) {
+        WebClient wc = WebClient.create(UnlinkUserInfoUri);
+        String response = wc.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/user/unlink")
+                        .queryParam("target_id_type", "user_id")
+                        .queryParam("target_id", deleteOAuthId)
+                        .build())
+                .header("Authorization", "KakaoAK " + oAuthClientConfig.getKakaoAdminKey())
+                .header("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        log.info("kakaoUnlinkUserInfo Response: {}", response);
     }
 }

@@ -83,6 +83,7 @@ public class UserController {
     @PostMapping("/delete")
     public BaseResponse deleteUser(HttpServletRequest httpServletRequest, @RequestParam("id") long deleteUserId) {
         userService.deleteUser(httpServletRequest, deleteUserId);
+        oAuthService.unlinkUserInfo(deleteUserId);
         return new BaseResponse<>();
     }
 }
