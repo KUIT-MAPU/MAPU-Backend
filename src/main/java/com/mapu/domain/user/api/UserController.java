@@ -1,15 +1,18 @@
 package com.mapu.domain.user.api;
 
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
+import com.mapu.domain.user.api.request.UserUpdateRequestDTO;
 import com.mapu.domain.user.application.UserService;
 import com.mapu.domain.user.application.response.SignInUpResponseDTO;
 import com.mapu.domain.user.application.response.UserInfoResponseDTO;
 import com.mapu.global.common.response.BaseResponse;
+import com.mapu.global.jwt.dto.JwtUserDto;
 import com.mapu.infra.oauth.application.OAuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,33 +59,22 @@ public class UserController {
     /**
      * 유저데이터 조회 API
      */
+
     @GetMapping
-    public BaseResponse<UserInfoResponseDTO> getUserInfo(){
-        //ContextHolder로부터 userId 받기
-        //UserInfoResponseDTO response = userService.getUserInfo();
-
-        UserInfoResponseDTO response = new UserInfoResponseDTO();
-        response.setMessage("유저데이터 조회 API 호출");
-
+    public BaseResponse<UserInfoResponseDTO> getUserInfo(@AuthenticationPrincipal JwtUserDto jwtUserDto){
+        UserInfoResponseDTO response = userService.getUserInfo(Long.parseLong(jwtUserDto.getName()));
         return new BaseResponse<>(response);
     }
 
     /**
      * 유저데이터 수정 API
      */
-//    @PostMapping
-//    public BaseResponse<UserUpdateResponseDTO> updateUserInfo(@RequestBody @Validated UserUpdateRequestDTO request,
-//                                                              MultipartFile image){
-//        //ContextHolder로부터 userId 받기
-//
-//        UserUpdateResponseDTO response= userService.updateUser();
-//        return new BaseResponse<>(response);
-//    }
-//}
-
-//    @GetMapping("/logout")
-//    public BaseResponse<Object> logout() {
-//
-//    }
+    @PostMapping
+    public BaseResponse updateUserInfo(@AuthenticationPrincipal JwtUserDto jwtUserDto,
+                                               @Validated @RequestPart("requestDTO") UserUpdateRequestDTO request,
+                                               @RequestPart("imageFile") MultipartFile image) throws IOException {
+        userService.updateUser(Long.parseLong(jwtUserDto.getName()), request, image);
+        return new BaseResponse<>();
+    }
 
 }
