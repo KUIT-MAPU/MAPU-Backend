@@ -24,7 +24,9 @@ public enum UserExceptionErrorCode implements ResponseStatus {
     LOGOUT_FAIL(4009, HttpStatus.BAD_REQUEST.value(), "로그아웃이 실패했습니다."),
     WITHDRAW_FAIL(4010, HttpStatus.BAD_REQUEST.value(), "회원탈퇴 실패했습니다."),
     SIGNUP_FAIL(4011, HttpStatus.INTERNAL_SERVER_ERROR.value(), "회원 정보 등록 중 오류가 발생했습니다."),
-    ALREADY_SIGNUP(4012, HttpStatus.BAD_REQUEST.value(), "이미 회원가입된 사용자입니다.");
+    ALREADY_SIGNUP(4012, HttpStatus.BAD_REQUEST.value(), "이미 회원가입된 사용자입니다."),
+    INVALID_USERID(4013, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 유저정보입니다."),
+    FAIL_GET_USER_INFO(4014, HttpStatus.INTERNAL_SERVER_ERROR.value(), "데이터베이스에서 회원정보를 불러오는 중 오류가 발생했습니다.");
 
     private final int code;
     private final int status;

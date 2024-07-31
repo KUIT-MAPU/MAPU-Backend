@@ -1,8 +1,13 @@
 package com.mapu.domain.user.application;
 
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
+import com.mapu.domain.user.api.request.UserUpdateRequestDTO;
 import com.mapu.domain.user.application.response.SignInUpResponseDTO;
+<<<<<<< HEAD
 import com.mapu.domain.user.application.response.UserDeleteResponseDTO;
+=======
+import com.mapu.domain.user.application.response.UserInfoResponseDTO;
+>>>>>>> 9e21243e77c438138aff493dd761832e4c53baae
 import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
 import com.mapu.domain.user.domain.UserRole;
@@ -30,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -143,6 +149,7 @@ public class UserService {
         }
     }
 
+<<<<<<< HEAD
     public UserDeleteResponseDTO deleteUser(HttpServletRequest request, String deleteUserEmail) {
         User user = userRepository.findByEmail(deleteUserEmail);
         logoutUser(request);
@@ -164,5 +171,39 @@ public class UserService {
             }
         }
         jwtService.deleteRefreshJwt(refresh);
+=======
+    public UserInfoResponseDTO getUserInfo(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if(user==null) throw new UserException(UserExceptionErrorCode.INVALID_USERID);
+
+        User findUser = user.get();
+
+        //TODO: Map, Follow 테이블 생성 후 데이터 추가 필요
+        UserInfoResponseDTO response = UserInfoResponseDTO
+                .builder().nickname(findUser.getNickname())
+                .profileId(findUser.getProfileId())
+                .imgUrl(findUser.getImage())
+                .mapCnt(0)
+                .followerCnt(0)
+                .followingCnt(0)
+                .build();
+
+        return response;
+    }
+
+    public void updateUser(long userId, UserUpdateRequestDTO request, MultipartFile image) throws IOException {
+        Optional<User> user = userRepository.findById(userId);
+        if(user==null) throw new UserException(UserExceptionErrorCode.INVALID_USERID);
+
+        User findUser = user.get();
+
+        findUser.setNickname(request.getNickname());
+        findUser.setProfileId(request.getProfileId());
+        if(image.isEmpty()) findUser.setImage(null);
+        else {
+            String imageUrl = uploadImage(image);
+            findUser.setImage(imageUrl);
+        }
+>>>>>>> 9e21243e77c438138aff493dd761832e4c53baae
     }
 }
