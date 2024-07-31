@@ -3,6 +3,7 @@ package com.mapu.domain.user.api;
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
 import com.mapu.domain.user.application.UserService;
 import com.mapu.domain.user.application.response.SignInUpResponseDTO;
+import com.mapu.domain.user.application.response.UserDeleteResponseDTO;
 import com.mapu.domain.user.application.response.UserInfoResponseDTO;
 import com.mapu.global.common.response.BaseResponse;
 import com.mapu.infra.oauth.application.OAuthService;
@@ -85,4 +86,9 @@ public class UserController {
 //
 //    }
 
+    @PostMapping("/delete")
+    public BaseResponse<UserDeleteResponseDTO> deleteUser(HttpServletRequest httpServletRequest, @RequestParam("email") String deleteUserEmail) {
+        UserDeleteResponseDTO response = userService.deleteUser(httpServletRequest, deleteUserEmail);
+        return new BaseResponse<>(response);
+    }
 }

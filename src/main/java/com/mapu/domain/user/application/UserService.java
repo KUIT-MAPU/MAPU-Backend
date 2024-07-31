@@ -2,17 +2,25 @@ package com.mapu.domain.user.application;
 
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
 import com.mapu.domain.user.application.response.SignInUpResponseDTO;
+import com.mapu.domain.user.application.response.UserDeleteResponseDTO;
 import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
 import com.mapu.domain.user.domain.UserRole;
+import com.mapu.domain.user.domain.UserStatus;
 import com.mapu.domain.user.exception.UserException;
 import com.mapu.domain.user.exception.errorcode.UserExceptionErrorCode;
+import com.mapu.global.common.exception.BaseException;
+import com.mapu.global.common.exception.errorcode.BaseExceptionErrorCode;
 import com.mapu.global.jwt.JwtUtil;
+import com.mapu.global.jwt.application.JwtService;
 import com.mapu.global.jwt.dto.JwtUserDto;
+import com.mapu.global.jwt.filter.handler.JwtLogoutHandler;
 import com.mapu.infra.oauth.dao.OAuthRepository;
 import com.mapu.infra.oauth.domain.OAuth;
 import com.mapu.infra.oauth.domain.OAuthUserInfo;
 import com.mapu.infra.s3.application.S3Service;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +39,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final OAuthRepository oAuthRepository;
     private final S3Service s3Service;
+    private final JwtService jwtService;
     private final JwtUtil jwtUtil;
 
     public SignInUpResponseDTO signUp(SignUpRequestDTO signUpRequestDTO, MultipartFile imageFile, HttpSession session, HttpServletResponse response) throws IOException {
@@ -134,4 +143,26 @@ public class UserService {
         }
     }
 
+    public UserDeleteResponseDTO deleteUser(HttpServletRequest request, String deleteUserEmail) {
+        User user = userRepository.findByEmail(deleteUserEmail);
+        logoutUser(request);
+        // userRepository.delete(user); // Option1: 완전 삭제
+        user.setStatus(String.valueOf(UserStatus.DELETE)); // Option2: 상태 변경
+        userRepository.save(user);
+        // kakao, google 연결해제
+    }
+
+    public void logoutUser(HttpServletRequest request) {
+        String refresh = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            throw new BaseException(BaseExceptionErrorCode.NO_COOKIE);
+        }
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(JwtUtil.REFRESH)) {
+                refresh = cookie.getValue();
+            }
+        }
+        jwtService.deleteRefreshJwt(refresh);
+    }
 }
