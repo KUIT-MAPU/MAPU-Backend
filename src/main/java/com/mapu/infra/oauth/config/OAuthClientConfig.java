@@ -8,7 +8,7 @@ public class OAuthClientConfig {
 
     @Value("${spring.oauth.google.client-id}")
     private String googleClientId;
-    @Value("${spring.oauth.googleredirect-uri}")
+    @Value("${spring.oauth.google.redirect-uri}")
     private String googleRedirectUri;
     @Value("${spring.oauth.google.client-secret}")
     private String googleClientSecret;

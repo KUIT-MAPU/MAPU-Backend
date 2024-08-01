@@ -35,6 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final List<String> permitAllUrls = List.of(
             "/user/signin/**",
             "/user/signup",
+            "/user/delete",
             "/jwt/reissue",
             "/error"
     );

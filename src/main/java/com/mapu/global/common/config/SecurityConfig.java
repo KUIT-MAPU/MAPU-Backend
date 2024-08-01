@@ -50,6 +50,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/user/signin/**", "/user/signup/**").permitAll()
+                        .requestMatchers("/user/delete").permitAll()
                         .requestMatchers("/jwt/reissue").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated());

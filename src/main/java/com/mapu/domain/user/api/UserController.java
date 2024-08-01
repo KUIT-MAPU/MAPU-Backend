@@ -80,8 +80,9 @@ public class UserController {
     /**
      * 유저데이터 삭제 API
      */
-    @PostMapping("/delete")
-    public BaseResponse deleteUser(HttpServletRequest httpServletRequest, @RequestParam("id") long deleteUserId) {
+    @GetMapping("/delete")
+    public BaseResponse deleteUser(@RequestParam("id") long deleteUserId, HttpServletRequest httpServletRequest) {
+        log.info("deleteUser: {}", deleteUserId);
         userService.deleteUser(httpServletRequest, deleteUserId);
         oAuthService.unlinkUserInfo(deleteUserId);
         return new BaseResponse<>();
