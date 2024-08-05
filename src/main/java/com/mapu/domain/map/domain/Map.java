@@ -5,6 +5,7 @@ import com.mapu.global.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -49,4 +50,18 @@ public class Map extends BaseEntity {
     @OneToMany(mappedBy = "map")
     private List<MapKeyword> keywords;
 
+
+    @Builder
+    public Map(String mapTitle, String mapDescription, String address, double latitude, double longitude,
+               int zoomLevel, String publishLink, boolean isOnSearch, User user) {
+        this.mapTitle = mapTitle;
+        this.mapDescription = mapDescription;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.zoomLevel = zoomLevel;
+        this.publishLink = publishLink;
+        this.isOnSearch = isOnSearch;
+        this.user = user;
+    }
 }
