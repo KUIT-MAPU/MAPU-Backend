@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
-public enum SearchExceptionErrorCode implements ResponseStatus {
+public enum MapExceptionErrorCode implements ResponseStatus {
 
     SOCIALTYPE_ERROR(7000, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 소셜타입입니다.");
 

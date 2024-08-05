@@ -5,8 +5,8 @@ import com.mapu.domain.map.application.response.MapOwnerResponseDTO;
 import com.mapu.domain.map.dao.MapKeywordRepository;
 import com.mapu.domain.map.dao.MapRespository;
 import com.mapu.domain.map.domain.Map;
-import com.mapu.domain.map.exception.SearchException;
-import com.mapu.domain.map.exception.errcode.SearchExceptionErrorCode;
+import com.mapu.domain.map.exception.MapException;
+import com.mapu.domain.map.exception.errcode.MapExceptionErrorCode;
 import com.mapu.domain.user.domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class MapService {
                 return mapList;
             }
             default:
-                new SearchException(SearchExceptionErrorCode.SOCIALTYPE_ERROR);
+                new MapException(MapExceptionErrorCode.SOCIALTYPE_ERROR);
         }
         return null;
     }

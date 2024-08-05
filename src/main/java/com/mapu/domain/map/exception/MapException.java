@@ -4,10 +4,10 @@ import com.mapu.global.common.response.status.ResponseStatus;
 import lombok.Getter;
 
 @Getter
-public class SearchException extends RuntimeException {
+public class MapException extends RuntimeException {
     private final ResponseStatus responseStatus;
 
-    public SearchException(ResponseStatus responseStatus) {
+    public MapException(ResponseStatus responseStatus) {
         super(responseStatus.getMessage());
         this.responseStatus = responseStatus;
     }
