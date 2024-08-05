@@ -9,6 +9,8 @@ import com.mapu.global.jwt.JwtUtil;
 import com.mapu.global.jwt.dto.JwtUserDto;
 import com.mapu.global.jwt.exception.JwtException;
 import com.mapu.global.jwt.exception.errorcode.JwtExceptionErrorCode;
+import com.mapu.infra.oauth.dao.OAuthRepository;
+import com.mapu.infra.oauth.domain.OAuth;
 import com.mapu.infra.oauth.domain.OAuthUserInfo;
 import com.mapu.infra.oauth.exception.OAuthException;
 import com.mapu.infra.oauth.exception.errorcode.OAuthExceptionErrorCode;
@@ -33,6 +35,7 @@ public class OAuthService {
     private final GoogleUserService googleUserService;
     private final KakaoUserService kakaoUserService;
     private final UserRepository userRepository;
+    private final OAuthRepository oAuthRepository;
     private final JwtUtil jwtUtil;
 
     public SignInUpResponseDTO login(String socialLoginType, String code, HttpSession session, HttpServletResponse response) {
@@ -130,6 +133,23 @@ public class OAuthService {
             return oAuthUserInfo;
         }catch (Exception e){
             throw new OAuthException(OAuthExceptionErrorCode.KAKAO_LOGIN_FAIL);
+        }
+    }
+
+    public void unlinkUserInfo(long deleteUserId) {
+        OAuth oAuth = oAuthRepository.findByUserId(deleteUserId);
+        if (oAuth == null) {
+            // TODO: 오류처리
+        }
+        String socialType = oAuth.getPlatformName();
+        switch (socialType) {
+            case "GOOGLE": {
+                googleUserService.unlinkUserInfo(Long.parseLong(oAuth.getPlatformId()));
+                break;
+            }
+            case "KAKAO": {
+                kakaoUserService.unlinkUserInfo(Long.parseLong(oAuth.getPlatformId()));
+            }
         }
     }
 }

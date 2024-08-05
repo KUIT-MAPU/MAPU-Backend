@@ -25,6 +25,7 @@ public class GoogleUserService {
 
     private final String accessTokenUri = "https://oauth2.googleapis.com/token";
     private final String UserInfoUri = "https://www.googleapis.com/oauth2/v1/userinfo";
+    private final String UnlinkUserInfoUri = "https://oauth2.googleapis.com/revoke";
 
 
     public GoogleToken getAccessToken(String code) {
@@ -62,7 +63,7 @@ public class GoogleUserService {
     public GoogleUserInfo requestGoogleUserInfo(GoogleToken googleToken) throws JsonProcessingException {
         //Http 요청
         log.info("requestGoogleUserInfo");
-        WebClient wc = WebClient.create(UserInfoUri);
+        WebClient wc = WebClient.create(UnlinkUserInfoUri);
         String response = wc.get()
                 .uri(UserInfoUri)
                 .header("Authorization", "Bearer " + googleToken.getAccess_token())
@@ -77,5 +78,28 @@ public class GoogleUserService {
         log.info("response: {}", response);
         googleUserInfo = objectMapper.readValue(response, GoogleUserInfo.class);
         return googleUserInfo;
+    }
+
+    public void unlinkUserInfo(long deleteOAuthId) {
+        String accessToken = "xxx";
+        // TODO: oAuthId로 AccessToken을 받아오는 방법..? -> 다시 로그인 해야함
+        // TODO: 소셜 로그인으로 받은 accessToken을 주기적으로 최신화해 서버(Redis)에서 관리하여 유저가 다시 로그인하는 불편함이 없도록 구현하는 방법
+//        String accessToken = (String) redisUtil.getValues("AT(oauth2):" + deleteOAuthId);
+        // oauth2 토큰이 만료 시 재로그인
+//        if (accessToken == null) {
+//            invalidateToken(request);
+//            throw SocialLoginRequriedException.EXCEPTION;
+//        } else {
+//            redisUtil.deleteValues("AT(oauth2):" + id);
+//        }
+        WebClient wc = WebClient.create();
+        String response = wc.post()
+                .uri(UnlinkUserInfoUri)
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .body(BodyInserters.fromFormData("token", accessToken))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        log.info("GoogleUnlinkUserInfo Response: {}", response);
     }
 }
