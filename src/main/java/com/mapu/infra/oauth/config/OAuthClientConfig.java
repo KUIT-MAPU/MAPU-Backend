@@ -6,19 +6,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class OAuthClientConfig {
 
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    @Value("${spring.oauth.google.client-id}")
     private String googleClientId;
-    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
+    @Value("${spring.oauth.google.redirect-uri}")
     private String googleRedirectUri;
-    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
+    @Value("${spring.oauth.google.client-secret}")
     private String googleClientSecret;
 
-    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    @Value("${spring.oauth.kakao.client-id}")
     private String kakaoClientId;
-    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    @Value("${spring.oauth.kakao.redirect-uri}")
     private String kakaoRedirectUri;
-    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
+    @Value("${spring.oauth.kakao.client-secret}")
     private String kakaoClientSecret;
+    @Value("${spring.oauth.kakao.admin-key}")
+    private String kakaoAdminKey;
 
     public String getGoogleClientId() {
         return googleClientId;
@@ -43,5 +45,7 @@ public class OAuthClientConfig {
     public String getKakaoClientSecret() {
         return kakaoClientSecret;
     }
+
+    public String getKakaoAdminKey() { return kakaoAdminKey; }
 }
 
