@@ -1,5 +1,7 @@
 package com.mapu.domain.map.domain;
 
+import com.mapu.domain.figure.domain.Figure;
+import com.mapu.domain.figure.domain.FigureTag;
 import com.mapu.domain.user.domain.User;
 import com.mapu.global.common.domain.BaseEntity;
 import jakarta.persistence.*;
@@ -9,6 +11,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -47,8 +51,12 @@ public class Map extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "map")
+    @OneToMany(mappedBy = "map", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MapKeyword> keywords;
+
+    @OneToMany(mappedBy = "map", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Figure> figure = new ArrayList<>();
+
 
 
     @Builder
