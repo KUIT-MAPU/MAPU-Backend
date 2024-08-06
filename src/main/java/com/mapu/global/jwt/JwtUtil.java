@@ -4,6 +4,7 @@ import com.mapu.global.jwt.domain.JwtRedis;
 import com.mapu.global.jwt.dto.JwtUserDto;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +34,14 @@ public class JwtUtil {
         this.accessExpiration = Integer.parseInt(accessExpiration);
         this.refreshExpiration = Integer.parseInt(refreshExpiration);
         this.jwtRedisRepository = jwtRedisRepository;
+    }
+
+    public String getTokenFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 
     public String getCategory(String token) {

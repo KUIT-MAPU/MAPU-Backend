@@ -144,12 +144,16 @@ public class UserService {
         }
     }
 
-    public void deleteUser(HttpServletRequest request, long deleteUserId) {
-        User user = userRepository.findById(deleteUserId);
+    public long deleteUser(HttpServletRequest request) {
+        String jwtToken = jwtUtil.getTokenFromRequest(request);
+        String deleteUserId = jwtUtil.getName(jwtToken);
+        log.info("delete user id {}", deleteUserId);
+        User user = userRepository.findById(Integer.parseInt(deleteUserId));
         logoutUser(request);
         // userRepository.delete(user); // Option1: 완전 삭제
         user.setStatus(String.valueOf(UserStatus.DELETE)); // Option2: 상태 변경
         userRepository.save(user);
+        return user.getId();
     }
 
     public void logoutUser(HttpServletRequest request) {
