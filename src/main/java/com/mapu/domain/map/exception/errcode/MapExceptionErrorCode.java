@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum MapExceptionErrorCode implements ResponseStatus {
 
+    NOT_FOUND_MAP(7001, HttpStatus.BAD_REQUEST.value(), "해당하는 map이 없습니다."),
+    NOT_FOUND_BOOKMARK(7002, HttpStatus.BAD_REQUEST.value(), "북마크되어 있는 Map이 아닙니다."),
     SOCIALTYPE_ERROR(7000, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 소셜타입입니다.");
 
     private final int code;

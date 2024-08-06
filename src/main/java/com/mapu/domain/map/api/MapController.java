@@ -3,14 +3,13 @@ package com.mapu.domain.map.api;
 import com.mapu.domain.map.application.MapService;
 import com.mapu.domain.map.application.response.MapListResponseDTO;
 import com.mapu.global.common.response.BaseResponse;
+import com.mapu.global.jwt.dto.JwtUserDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class MapController {
     /**
      * 탐색화면 로그인 여부 확인
      */
-    @GetMapping("/Logined")
+    @GetMapping("/logined")
     public BaseResponse checkLoginStatus(HttpServletRequest request) {
         mapService.checkLoginStatus(request);
         return new BaseResponse<>();
@@ -47,14 +46,18 @@ public class MapController {
     /**
      * 탐색화면 북마크 추가
      */
-    public BaseResponse addMapBookMark() {
+    @PostMapping("/bookmark")
+    public BaseResponse addMapBookmark(@AuthenticationPrincipal JwtUserDto jwtUserDto, @RequestParam Long mapId) {
+        mapService.addMapBookmark(Long.parseLong(jwtUserDto.getName()), mapId);
         return new BaseResponse<>();
     }
 
     /**
      * 탐색화면 북마크 취소
      */
-    public BaseResponse removeMapBookMark() {
+    @DeleteMapping("/bookmark")
+    public BaseResponse removeMapBookmark(@AuthenticationPrincipal JwtUserDto jwtUserDto, @RequestParam Long mapId) {
+        mapService.removeMapBookmark(Long.parseLong(jwtUserDto.getName()), mapId);
         return new BaseResponse<>();
     }
 

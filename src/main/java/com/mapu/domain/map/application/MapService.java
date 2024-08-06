@@ -4,16 +4,18 @@ import com.mapu.domain.map.application.response.MapListResponseDTO;
 import com.mapu.domain.map.application.response.MapOwnerResponseDTO;
 import com.mapu.domain.map.dao.MapKeywordRepository;
 import com.mapu.domain.map.dao.MapRespository;
+import com.mapu.domain.map.dao.MapUserBookmarkRepository;
 import com.mapu.domain.map.domain.Map;
+import com.mapu.domain.map.domain.MapUserBookmark;
 import com.mapu.domain.map.exception.MapException;
 import com.mapu.domain.map.exception.errcode.MapExceptionErrorCode;
+import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
+import com.mapu.domain.map.exception.errcode.MapExceptionErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
@@ -28,6 +30,10 @@ public class MapService {
     private MapRespository mapRespository;
     @Autowired
     private MapKeywordRepository keywordRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private MapUserBookmarkRepository mapUserBookmarkRepository;
 
     public void checkLoginStatus(HttpServletRequest request) {
     }
@@ -85,5 +91,20 @@ public class MapService {
                 .user(mapOwnerDTO)
                 .keyword(keywords)
                 .build();
+    }
+
+    public void addMapBookmark(long userId, Long mapId) {
+        User user = userRepository.findById(userId);
+        Map map = mapRespository.findById(mapId).orElseThrow(()-> new MapException(MapExceptionErrorCode.NOT_FOUND_MAP));
+        MapUserBookmark mapUserBookmark = MapUserBookmark.builder().user(user).map(map).build();
+        mapUserBookmarkRepository.save(mapUserBookmark);
+    }
+
+    public void removeMapBookmark(long userId, Long mapId) {
+        MapUserBookmark mapUserBookmark = mapUserBookmarkRepository.findByUserIdAndMapId(userId, mapId);
+        if (mapUserBookmark == null){
+            throw new MapException(MapExceptionErrorCode.NOT_FOUND_BOOKMARK);
+        }
+        mapUserBookmarkRepository.delete(mapUserBookmark);
     }
 }
