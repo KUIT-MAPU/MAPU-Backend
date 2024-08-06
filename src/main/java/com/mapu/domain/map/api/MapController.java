@@ -6,6 +6,7 @@ import com.mapu.global.common.response.BaseResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,11 +36,10 @@ public class MapController {
     @GetMapping("/search")
     public BaseResponse<List<MapListResponseDTO>> getMapList(
             @RequestParam("searchType") String searchType,
-            @RequestParam("page") int page,
-            @RequestParam("rows") int rows) {
+            final Pageable pageable) {
 
-        log.info("MapController getMapList - searchType: {}, page: {}, rows: {}", searchType, page, rows);
-        List<MapListResponseDTO> responseDTOList = mapService.getMapList(searchType.toUpperCase(), page, rows);
+        log.info("MapController searchType: {}", searchType);
+        List<MapListResponseDTO> responseDTOList = mapService.getMapList(searchType.toUpperCase(), pageable);
         log.info("MapController getMapList - responseDTOList size: {}", responseDTOList.size());
         return new BaseResponse<>(responseDTOList);
     }
