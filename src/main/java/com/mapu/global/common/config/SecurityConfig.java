@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .requestMatchers("/search/map").permitAll()
                         .requestMatchers("/jwt/reissue").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/map").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS

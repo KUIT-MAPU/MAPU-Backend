@@ -26,7 +26,7 @@ public class Figure extends BaseEntity {
     private Map map;
 
     @NotNull
-    private int type;
+    private FigureType type;
 
     @NotNull
     private String address;
