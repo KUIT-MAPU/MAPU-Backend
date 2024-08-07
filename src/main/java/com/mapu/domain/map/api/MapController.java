@@ -30,7 +30,7 @@ public class MapController {
     /**
      * 탐색화면 로그인 여부 확인
      */
-    @GetMapping("/Logined")
+    @GetMapping("/logined")
     public BaseResponse checkLoginStatus(HttpServletRequest request) {
         mapService.checkLoginStatus(request);
         return new BaseResponse<>();

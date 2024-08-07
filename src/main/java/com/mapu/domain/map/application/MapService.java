@@ -40,26 +40,25 @@ public class MapService {
     public List<MapListResponseDTO> getMapList(String searchType, Pageable pageable) {
         switch (searchType) {
             case "RANDOM": {
-                List<MapListResponseDTO> mapList = GetMapListByRandom(pageable);
+                List<MapListResponseDTO> mapList = getMapListByRandom(pageable);
                 return mapList;
             }
             case "DATE": {
-                List<MapListResponseDTO> mapList = GetMapListByDate(pageable);
+                List<MapListResponseDTO> mapList = getMapListByDate(pageable);
                 return mapList;
             }
             default:
-                new MapException(MapExceptionErrorCode.SOCIALTYPE_ERROR);
+                throw new MapException(MapExceptionErrorCode.SOCIALTYPE_ERROR);
         }
-        return null;
     }
 
-    private List<MapListResponseDTO> GetMapListByDate(Pageable pageable) {
+    private List<MapListResponseDTO> getMapListByDate(Pageable pageable) {
         List<Map> maps = mapRepository.findAllByOrderByCreatedAtDesc(pageable);
         log.info("MapService GetMapListByDate - Retrieved {} map(s) from the database", maps.size());
         return maps.stream().map(this::mapConvertToDTO).collect(Collectors.toList());
     }
 
-    private List<MapListResponseDTO> GetMapListByRandom(Pageable pageable) {
+    private List<MapListResponseDTO> getMapListByRandom(Pageable pageable) {
         // TODO : Pageable 오류 해결 (제대로 paging 처리가 안돼)
         List<Map> maps = mapRepository.findAllByRandom(pageable);
         log.info("MapService GetMapListByRandom - Retrieved {} map(s) from the database", maps.size());
