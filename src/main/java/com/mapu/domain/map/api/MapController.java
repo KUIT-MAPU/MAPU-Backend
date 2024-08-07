@@ -1,15 +1,22 @@
 package com.mapu.domain.map.api;
 
+import com.mapu.domain.map.api.request.CreateMapRequestDTO;
 import com.mapu.domain.map.application.MapService;
 import com.mapu.domain.map.application.response.MapListResponseDTO;
+import com.mapu.domain.map.domain.Map;
 import com.mapu.global.common.response.BaseResponse;
 import com.mapu.global.jwt.dto.JwtUserDto;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -61,4 +68,17 @@ public class MapController {
         return new BaseResponse<>();
     }
 
+    /**
+     *  맵 생성
+     */
+    @RequestMapping("/create")
+    @PostMapping
+    public BaseResponse<Void> createMap(@AuthenticationPrincipal JwtUserDto jwtUserDto,
+                                                  @Valid @RequestBody CreateMapRequestDTO requestDTO) {
+        Long userId = Long.parseLong(jwtUserDto.getName());
+        mapService.createMap(requestDTO, userId);
+        return new BaseResponse<>(null);
+    }
+
 }
+

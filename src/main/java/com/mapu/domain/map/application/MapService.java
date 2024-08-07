@@ -1,10 +1,11 @@
 package com.mapu.domain.map.application;
 
+import com.mapu.domain.map.api.request.CreateMapRequestDTO;
 import com.mapu.domain.map.application.response.MapListResponseDTO;
 import com.mapu.domain.map.application.response.MapOwnerResponseDTO;
 import com.mapu.domain.map.dao.MapKeywordRepository;
-import com.mapu.domain.map.dao.MapRespository;
 import com.mapu.domain.map.dao.MapUserBookmarkRepository;
+import com.mapu.domain.map.dao.MapRepository;
 import com.mapu.domain.map.domain.Map;
 import com.mapu.domain.map.domain.MapUserBookmark;
 import com.mapu.domain.map.exception.MapException;
@@ -18,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +30,7 @@ import java.util.stream.Collectors;
 public class MapService {
 
     @Autowired
-    private MapRespository mapRespository;
+    private MapRepository mapRepository;
     @Autowired
     private MapKeywordRepository keywordRepository;
     @Autowired
@@ -55,14 +58,14 @@ public class MapService {
     }
 
     private List<MapListResponseDTO> GetMapListByDate(Pageable pageable) {
-        List<Map> maps = mapRespository.findAllByOrderByCreatedAtDesc(pageable);
+        List<Map> maps = mapRepository.findAllByOrderByCreatedAtDesc(pageable);
         log.info("MapService GetMapListByDate - Retrieved {} map(s) from the database", maps.size());
         return maps.stream().map(this::mapConvertToDTO).collect(Collectors.toList());
     }
 
     private List<MapListResponseDTO> GetMapListByRandom(Pageable pageable) {
         // TODO : Pageable 오류 해결 (제대로 paging 처리가 안돼)
-        List<Map> maps = mapRespository.findAllByRandom(pageable);
+        List<Map> maps = mapRepository.findAllByRandom(pageable);
         log.info("MapService GetMapListByRandom - Retrieved {} map(s) from the database", maps.size());
         return maps.stream().map(this::mapConvertToDTO).collect(Collectors.toList());
     }
@@ -95,7 +98,7 @@ public class MapService {
 
     public void addMapBookmark(long userId, Long mapId) {
         User user = userRepository.findById(userId);
-        Map map = mapRespository.findById(mapId).orElseThrow(()-> new MapException(MapExceptionErrorCode.NOT_FOUND_MAP));
+        Map map = mapRepository.findById(mapId).orElseThrow(()-> new MapException(MapExceptionErrorCode.NOT_FOUND_MAP));
         MapUserBookmark mapUserBookmark = MapUserBookmark.builder().user(user).map(map).build();
         mapUserBookmarkRepository.save(mapUserBookmark);
     }
@@ -107,4 +110,22 @@ public class MapService {
         }
         mapUserBookmarkRepository.delete(mapUserBookmark);
     }
+
+    public void createMap(CreateMapRequestDTO requestDTO, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저 없음"));
+
+        Map map = Map.builder()
+                .mapTitle(requestDTO.getMapTitle())
+                .mapDescription(requestDTO.getMapDescription())
+                .address(requestDTO.getAddress())
+                .latitude(requestDTO.getLatitude())
+                .longitude(requestDTO.getLongitude())
+                .zoomLevel(requestDTO.getZoomLevel())
+                .publishLink(requestDTO.getPublishLink())
+                .isOnSearch(requestDTO.getIsOnSearch())
+                .user(user)
+                .build();
+        mapRepository.save(map);
+    }
+
 }
