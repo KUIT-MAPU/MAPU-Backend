@@ -1,15 +1,15 @@
 package com.mapu.domain.map.api;
 
 import com.mapu.domain.map.application.MapService;
+import com.mapu.domain.map.application.response.MapEditorListResponseDTO;
 import com.mapu.domain.map.application.response.MapListResponseDTO;
 import com.mapu.global.common.response.BaseResponse;
+import com.mapu.global.jwt.dto.JwtUserDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -57,5 +57,18 @@ public class MapController {
     public BaseResponse removeMapBookMark() {
         return new BaseResponse<>();
     }
+
+    /**
+     * 공동 편집자 목록 조회 API
+     */
+    @GetMapping("/{mapId}/editor")
+    public BaseResponse<MapEditorListResponseDTO> getEditorList(@PathVariable("mapId") Long mapId, @AuthenticationPrincipal JwtUserDto jwtUserDto) {
+        MapEditorListResponseDTO response = mapService.getEditorList(mapId,Long.parseLong(jwtUserDto.getName()));
+        return new BaseResponse<>(response);
+    }
+
+    /**
+     * 공동 편집자 추가 API
+     */
 
 }

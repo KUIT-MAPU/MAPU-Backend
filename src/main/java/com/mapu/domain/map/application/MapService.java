@@ -1,5 +1,6 @@
 package com.mapu.domain.map.application;
 
+import com.mapu.domain.map.application.response.MapEditorListResponseDTO;
 import com.mapu.domain.map.application.response.MapListResponseDTO;
 import com.mapu.domain.map.application.response.MapOwnerResponseDTO;
 import com.mapu.domain.map.dao.MapKeywordRepository;
@@ -84,5 +85,10 @@ public class MapService {
                 .user(mapOwnerDTO)
                 .keyword(keywords)
                 .build();
+    }
+
+    public MapEditorListResponseDTO getEditorList(Long mapId, long parseLong) {
+
+        return null;
     }
 }
