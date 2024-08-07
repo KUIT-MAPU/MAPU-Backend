@@ -191,12 +191,18 @@ public class UserService {
     }
 
     public void updateUser(long userId, UserUpdateRequestDTO request, MultipartFile image) throws IOException {
+        //imageUrl이 들어온 경우 -> 원래 이미지 사용
+        //imageUrl이 안들어온 경우 -> 기본 이미지 혹은 새로운 이미지 파일 업로드
+
         User user = userRepository.findById(userId);
         if(user==null) throw new UserException(UserExceptionErrorCode.INVALID_USERID);
 
+        //이상한 imageUrl이 들어온 경우
+        if(request.getImageUrl()!=null && !request.getImageUrl().equals(user.getImage())) throw new UserException(UserExceptionErrorCode.INVALID_IMAGE);
+
         user.setNickname(request.getNickname());
         user.setProfileId(request.getProfileId());
-        if(image.isEmpty()) user.setImage(null);
+        if(image.isEmpty()) user.setImage(request.getImageUrl());
         else {
             String imageUrl = uploadImage(image);
             user.setImage(imageUrl);

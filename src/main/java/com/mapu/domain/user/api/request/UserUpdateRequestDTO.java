@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.lang.Nullable;
 
 @Getter
 @Setter
@@ -22,4 +23,7 @@ public class UserUpdateRequestDTO {
             message = "최소 {min}자리 ~ 최대 {max}자리까지 가능합니다")
     @Pattern(regexp = "^[a-z0-9._]+$", message = "영어 소문자, 숫자, 특수문자(.,_)만 사용가능합니다.")
     private String profileId;
+
+    @Nullable
+    private String imageUrl;
 }
