@@ -7,7 +7,7 @@ import com.mapu.domain.map.domain.Map;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
 
-public interface MapRespository extends JpaRepository<Map, Long> {
+public interface MapRepository extends JpaRepository<Map, Long> {
     @Query("SELECT m FROM Map m ORDER BY m.created_at DESC")
     List<Map> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
