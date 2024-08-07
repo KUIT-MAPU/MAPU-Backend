@@ -1,5 +1,6 @@
 package com.mapu.domain.map.application;
 
+import com.mapu.domain.map.api.request.CreateMapRequestDTO;
 import com.mapu.domain.map.application.response.MapListResponseDTO;
 import com.mapu.domain.map.application.response.MapOwnerResponseDTO;
 import com.mapu.domain.map.dao.MapKeywordRepository;
@@ -7,6 +8,7 @@ import com.mapu.domain.map.dao.MapRespository;
 import com.mapu.domain.map.domain.Map;
 import com.mapu.domain.map.exception.MapException;
 import com.mapu.domain.map.exception.errcode.MapExceptionErrorCode;
+import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -15,18 +17,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MapService {
 
     @Autowired
-    private MapRespository mapRespository;
+    private  MapRespository mapRepository;
     @Autowired
     private MapKeywordRepository keywordRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public void checkLoginStatus(HttpServletRequest request) {
     }
@@ -49,7 +56,7 @@ public class MapService {
 
     private List<MapListResponseDTO> GetMapListByDate(int page, int rows) {
         Pageable pageable = (Pageable) PageRequest.of(page, rows);
-        List<Map> maps = mapRespository.findAllByOrderByCreatedAtDesc(pageable);
+        List<Map> maps = mapRepository.findAllByOrderByCreatedAtDesc(pageable);
         log.info("MapService GetMapListByDate - Retrieved {} map(s) from the database", maps.size());
         return maps.stream().map(this::mapConvertToDTO).collect(Collectors.toList());
     }
@@ -57,7 +64,7 @@ public class MapService {
     private List<MapListResponseDTO> GetMapListByRandom(int page, int rows) {
         Pageable pageable = (Pageable) PageRequest.of(page, rows);
         // TODO : Pageable 오류 해결 (제대로 paging 처리가 안돼)
-        List<Map> maps = mapRespository.findAllByRandom(pageable);
+        List<Map> maps = mapRepository.findAllByRandom(pageable);
         log.info("MapService GetMapListByRandom - Retrieved {} map(s) from the database", maps.size());
         return maps.stream().map(this::mapConvertToDTO).collect(Collectors.toList());
     }
@@ -85,4 +92,22 @@ public class MapService {
                 .keyword(keywords)
                 .build();
     }
+
+    public void createMap(CreateMapRequestDTO requestDTO, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저 없음"));
+
+        Map map = Map.builder()
+                .mapTitle(requestDTO.getMapTitle())
+                .mapDescription(requestDTO.getMapDescription())
+                .address(requestDTO.getAddress())
+                .latitude(requestDTO.getLatitude())
+                .longitude(requestDTO.getLongitude())
+                .zoomLevel(requestDTO.getZoomLevel())
+                .publishLink(requestDTO.getPublishLink())
+                .isOnSearch(requestDTO.getIsOnSearch())
+                .user(user)
+                .build();
+        mapRepository.save(map);
+    }
+
 }
