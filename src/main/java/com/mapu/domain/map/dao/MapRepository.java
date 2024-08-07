@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.mapu.domain.map.domain.Map;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,4 +21,7 @@ public interface MapRepository extends JpaRepository<Map, Long> {
     List<Map> findAllByRandom(Pageable pageable);
 
     Map findById(long mapId);
+
+    @Query("SELECT COUNT(m) FROM Map m WHERE m.user.id = :userId")
+    int countMapsByUserId(@Param("userId") Long userId);
 }

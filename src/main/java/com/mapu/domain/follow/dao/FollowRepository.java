@@ -3,6 +3,8 @@ package com.mapu.domain.follow.dao;
 import com.mapu.domain.follow.domain.Follow;
 import com.mapu.domain.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -31,4 +33,10 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     // 특정 팔로우 관계 조회
     Optional<Follow> findByFollowerAndFollowing(User follower, User following);
+
+    @Query("SELECT COUNT(f) FROM Follow f WHERE f.following.id = :userId")
+    int countFollowerByUserId(@Param("userId") long userId);
+
+    @Query("SELECT COUNT(f) FROM Follow f WHERE f.follower.id = :userId")
+    int countFollowingByUserId(@Param("userId") long userId);
 }
