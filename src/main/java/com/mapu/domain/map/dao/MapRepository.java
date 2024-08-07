@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface MapRepository extends JpaRepository<Map, Long> {
     @Query("SELECT m FROM Map m ORDER BY m.created_at DESC")
     List<Map> findAllByOrderByCreatedAtDesc(Pageable pageable);
@@ -24,4 +23,5 @@ public interface MapRepository extends JpaRepository<Map, Long> {
 
     @Query("SELECT COUNT(m) FROM Map m WHERE m.user.id = :userId")
     int countMapsByUserId(@Param("userId") Long userId);
+
 }

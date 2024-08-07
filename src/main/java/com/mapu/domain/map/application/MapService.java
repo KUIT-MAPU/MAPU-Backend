@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,32 +44,28 @@ public class MapService {
     public void checkLoginStatus(HttpServletRequest request) {
     }
 
-    public List<MapListResponseDTO> getMapList(String searchType, int page, int rows) {
+    public List<MapListResponseDTO> getMapList(String searchType, Pageable pageable) {
         switch (searchType) {
             case "RANDOM": {
-                List<MapListResponseDTO> mapList = GetMapListByRandom(page, rows);
+                List<MapListResponseDTO> mapList = getMapListByRandom(pageable);
                 return mapList;
             }
             case "DATE": {
-                List<MapListResponseDTO> mapList = GetMapListByDate(page, rows);
+                List<MapListResponseDTO> mapList = getMapListByDate(pageable);
                 return mapList;
             }
             default:
-                new MapException(MapExceptionErrorCode.SOCIALTYPE_ERROR);
+                throw new MapException(MapExceptionErrorCode.SOCIALTYPE_ERROR);
         }
-        return null;
     }
 
-    private List<MapListResponseDTO> GetMapListByDate(int page, int rows) {
-        Pageable pageable = (Pageable) PageRequest.of(page, rows);
+    private List<MapListResponseDTO> getMapListByDate(Pageable pageable) {
         List<Map> maps = mapRepository.findAllByOrderByCreatedAtDesc(pageable);
         log.info("MapService GetMapListByDate - Retrieved {} map(s) from the database", maps.size());
         return maps.stream().map(this::mapConvertToDTO).collect(Collectors.toList());
     }
 
-    private List<MapListResponseDTO> GetMapListByRandom(int page, int rows) {
-        Pageable pageable = (Pageable) PageRequest.of(page, rows);
-        // TODO : Pageable 오류 해결 (제대로 paging 처리가 안돼)
+    private List<MapListResponseDTO> getMapListByRandom(Pageable pageable) {
         List<Map> maps = mapRepository.findAllByRandom(pageable);
         log.info("MapService GetMapListByRandom - Retrieved {} map(s) from the database", maps.size());
         return maps.stream().map(this::mapConvertToDTO).collect(Collectors.toList());
@@ -87,6 +84,8 @@ public class MapService {
         }
 
         List<String> keywords = keywordRepository.findKeywordsByMapId(map.getId());
+        log.info("MapService mapConvertToDTO - Retrieved keywords from the database");
+        log.info("keywords = " + keywords);
 
         return MapListResponseDTO.builder()
                 .title(map.getMapTitle())

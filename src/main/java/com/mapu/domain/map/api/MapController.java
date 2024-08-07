@@ -12,6 +12,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +32,7 @@ public class MapController {
     /**
      * 탐색화면 로그인 여부 확인
      */
-    @GetMapping("/Logined")
+    @GetMapping("/logined")
     public BaseResponse checkLoginStatus(HttpServletRequest request) {
         mapService.checkLoginStatus(request);
         return new BaseResponse<>();
@@ -39,11 +44,10 @@ public class MapController {
     @GetMapping("/search")
     public BaseResponse<List<MapListResponseDTO>> getMapList(
             @RequestParam("searchType") String searchType,
-            @RequestParam("page") int page,
-            @RequestParam("rows") int rows) {
+            final Pageable pageable) {
 
-        log.info("MapController getMapList - searchType: {}, page: {}, rows: {}", searchType, page, rows);
-        List<MapListResponseDTO> responseDTOList = mapService.getMapList(searchType.toUpperCase(), page, rows);
+        log.info("MapController searchType: {}", searchType);
+        List<MapListResponseDTO> responseDTOList = mapService.getMapList(searchType.toUpperCase(), pageable);
         log.info("MapController getMapList - responseDTOList size: {}", responseDTOList.size());
         return new BaseResponse<>(responseDTOList);
     }
