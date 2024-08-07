@@ -59,7 +59,6 @@ public class MapService {
     }
 
     private List<MapListResponseDTO> getMapListByRandom(Pageable pageable) {
-        // TODO : Pageable 오류 해결 (제대로 paging 처리가 안돼)
         List<Map> maps = mapRepository.findAllByRandom(pageable);
         log.info("MapService GetMapListByRandom - Retrieved {} map(s) from the database", maps.size());
         return maps.stream().map(this::mapConvertToDTO).collect(Collectors.toList());
