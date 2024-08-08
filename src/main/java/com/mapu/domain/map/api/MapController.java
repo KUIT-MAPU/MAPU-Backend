@@ -1,9 +1,11 @@
 package com.mapu.domain.map.api;
 
+import com.mapu.domain.map.api.request.AddEditorRequestDTO;
 import com.mapu.domain.map.api.request.CreateMapRequestDTO;
 import com.mapu.domain.map.application.MapService;
+import com.mapu.domain.map.application.response.MapEditorListResponseDTO;
+import com.mapu.domain.map.application.response.MapEditorResponseDTO;
 import com.mapu.domain.map.application.response.MapListResponseDTO;
-import com.mapu.domain.map.domain.Map;
 import com.mapu.global.common.response.BaseResponse;
 import com.mapu.global.jwt.dto.JwtUserDto;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,6 +65,28 @@ public class MapController {
     public BaseResponse removeMapBookMark() {
         return new BaseResponse<>();
     }
+
+    /**
+     * 공동 편집자 목록 조회 API
+     */
+    @GetMapping("/{mapId}/editors")
+    public BaseResponse<MapEditorListResponseDTO> getEditorList(@PathVariable("mapId") Long mapId,
+                                                                @RequestParam("page") int pageNum,
+                                                                @RequestParam("size") int pageSize) {
+        MapEditorListResponseDTO response = mapService.getEditorList(mapId,pageNum, pageSize);
+        return new BaseResponse<>(response);
+    }
+
+    /**
+     * 공동 편집자 추가 API
+     */
+    @PostMapping("/{mapId}/editor")
+    public BaseResponse addEditor(@PathVariable("mapId") Long mapId,
+                                  @RequestBody AddEditorRequestDTO addEditorRequestDTO){
+        mapService.addEditor(mapId, addEditorRequestDTO.getNickname());
+        return new BaseResponse();
+    }
+
 
     /**
      *  맵 생성
