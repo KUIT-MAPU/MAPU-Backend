@@ -54,6 +54,8 @@ public class SecurityConfig {
                         .requestMatchers("/jwt/reissue").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/map").permitAll()
+                        .requestMatchers("/home/editor").permitAll()
+                        .requestMatchers("/home/keyword").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
