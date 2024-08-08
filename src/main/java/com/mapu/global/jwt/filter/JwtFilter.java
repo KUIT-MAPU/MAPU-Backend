@@ -37,7 +37,9 @@ public class JwtFilter extends OncePerRequestFilter {
             "/user/signup",
             "/user/delete",
             "/jwt/reissue",
-            "/error"
+            "/error",
+            "/home/editor",
+            "/home/keyword"
     );
 
     @Override
