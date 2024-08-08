@@ -1,5 +1,6 @@
 package com.mapu.domain.user.api;
 
+import com.mapu.domain.user.api.request.SignInRequestDTO;
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
 import com.mapu.domain.user.api.request.UserUpdateRequestDTO;
 import com.mapu.domain.user.application.UserService;
@@ -31,13 +32,13 @@ public class UserController {
      * 유저 로그인 API
      */
 
-    @GetMapping("/signin/{socialLoginType}")
-    public BaseResponse<SignInUpResponseDTO> socialLogin(@PathVariable("socialLoginType") String oauthType,
-                                                         @RequestParam("code") String code,
+    @PostMapping("/signin")
+    public BaseResponse<SignInUpResponseDTO> socialLogin(@RequestBody SignInRequestDTO signInRequestDTO,
                                                          HttpServletRequest httpServletRequest,
                                                          HttpServletResponse httpServletResponse) {
-        log.info("socialLoginType: {}", oauthType.toUpperCase());
-        SignInUpResponseDTO response = oAuthService.login(oauthType.toUpperCase(), code, httpServletRequest.getSession(), httpServletResponse);
+
+        log.info("socialLoginType: {}", signInRequestDTO.getSocialType().toUpperCase());
+        SignInUpResponseDTO response = oAuthService.login(signInRequestDTO.getSocialType().toUpperCase(), signInRequestDTO.getCode(), httpServletRequest.getSession(), httpServletResponse);
 
         return new BaseResponse<>(response);
     }
