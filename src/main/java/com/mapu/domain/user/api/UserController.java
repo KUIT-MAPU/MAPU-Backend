@@ -33,7 +33,7 @@ public class UserController {
      */
 
     @PostMapping("/signin")
-    public BaseResponse<SignInUpResponseDTO> socialLogin(@RequestBody SignInRequestDTO signInRequestDTO,
+    public BaseResponse<SignInUpResponseDTO> socialLogin(@Validated @RequestBody SignInRequestDTO signInRequestDTO,
                                                          HttpServletRequest httpServletRequest,
                                                          HttpServletResponse httpServletResponse) {
 
