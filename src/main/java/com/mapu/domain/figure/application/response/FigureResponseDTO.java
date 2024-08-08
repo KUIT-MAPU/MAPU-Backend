@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 public class FigureResponseDTO {
     private Long id;
-    private int type;
+    private String type;
     private String address;
     private int round;
     private int area;
@@ -19,7 +19,7 @@ public class FigureResponseDTO {
     public static FigureResponseDTO from(Figure figure) {
         return FigureResponseDTO.builder()
                 .id(figure.getId())
-                .type(figure.getType().ordinal())
+                .type(String.valueOf(figure.getType()))
                 .address(figure.getAddress())
                 .round(figure.getRound())
                 .area(figure.getArea())

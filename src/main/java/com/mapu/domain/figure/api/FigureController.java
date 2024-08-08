@@ -16,12 +16,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FigureController {
 
-    private FigureService figureService;
+    private final FigureService figureService;
 
+    //객체 기본정보 조회ㅣ
     @GetMapping("/{figureId}")
     public BaseResponse<FigureResponseDTO> getFigure(@PathVariable Long figureId) {
+        System.out.println(figureId);
         FigureResponseDTO figureDTO = figureService.getFigure(figureId);
+        System.out.println( figureService.getFigure(figureId));
         return new BaseResponse<>(figureDTO);
+    }
+
+    //객체 정보 속성
+    @GetMapping("/{figureId}/detail")
+    public BaseResponse<Void> getFigureDetail(@PathVariable Long figureId) {
+    return null;
     }
 
 
