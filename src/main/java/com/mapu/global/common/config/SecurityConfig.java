@@ -48,7 +48,7 @@ public class SecurityConfig {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(List.of(("https://mapu-frontend.vercel.app/"),
+                        configuration.setAllowedOrigins(List.of(("https://mapu-frontend.vercel.app"),
                                 ("http://localhost:9000"),("http://localhost:3000")));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
