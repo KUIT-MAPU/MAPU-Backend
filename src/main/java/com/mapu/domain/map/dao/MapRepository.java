@@ -24,4 +24,6 @@ public interface MapRepository extends JpaRepository<Map, Long> {
     @Query("SELECT COUNT(m) FROM Map m WHERE m.user.id = :userId")
     int countMapsByUserId(@Param("userId") Long userId);
 
+    @Query("SELECT m FROM Map m WHERE m.user.id = :otherUserId")
+    List<Map> findOtherUserMapsByUserId(@Param("otherUserId") Long otherUserId, Pageable pageable);
 }

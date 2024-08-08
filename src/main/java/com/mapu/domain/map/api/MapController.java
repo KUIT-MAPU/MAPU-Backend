@@ -104,5 +104,14 @@ public class MapController {
         return new BaseResponse<>(null);
     }
 
+    /**
+     * 타유저의 지도데이터 조회
+     */
+    @GetMapping("/{otherUserId}")
+    public BaseResponse getOtherUserMap(@PathVariable("otherUserId") long otherUserId,
+                                        Pageable pageable) {
+        List<MapListResponseDTO> response = mapService.getOtherUserMapList(otherUserId, pageable);
+        return new BaseResponse<>(response);
+    }
 }
 

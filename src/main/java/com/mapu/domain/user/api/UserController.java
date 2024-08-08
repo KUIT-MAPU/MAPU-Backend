@@ -88,4 +88,14 @@ public class UserController {
         oAuthService.unlinkUserInfo(deleteUserId);
         return new BaseResponse<>();
     }
+
+
+    /**
+     * 타유저데이터 조회 (지도 & 팔로우 & 팔로잉 정보)
+     */
+    @GetMapping("/{otherUserId}")
+    public BaseResponse<UserInfoResponseDTO> getUserInfo(@PathVariable Long otherUserId) {
+        UserInfoResponseDTO response = userService.getUserInfo(otherUserId);
+        return new BaseResponse<>(response);
+    }
 }

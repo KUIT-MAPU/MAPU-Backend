@@ -165,4 +165,11 @@ public class MapService {
 
         mapUserRoleRepository.save(mapUserRole);
     }
+
+    public List<MapListResponseDTO> getOtherUserMapList(long otherUserId, Pageable pageable) {
+        List<Map> maps = mapRepository.findOtherUserMapsByUserId(otherUserId, pageable);
+        log.info("MapService getOtherUserMapList - Retrieved {} map(s) from the database", maps.size());
+        return maps.stream().map(this::mapConvertToDTO).collect(Collectors.toList());
+
+    }
 }
