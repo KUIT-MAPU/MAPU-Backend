@@ -70,7 +70,7 @@ public class UserController {
     /**
      * 유저데이터 수정 API
      */
-    @PostMapping
+    @PatchMapping
     public BaseResponse updateUserInfo(@AuthenticationPrincipal JwtUserDto jwtUserDto,
                                                @Validated @RequestPart("requestDTO") UserUpdateRequestDTO request,
                                                @RequestPart("imageFile") MultipartFile image) throws IOException {

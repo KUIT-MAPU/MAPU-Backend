@@ -57,8 +57,6 @@ public class Map extends BaseEntity {
     @OneToMany(mappedBy = "map", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Figure> figure = new ArrayList<>();
 
-
-
     @Builder
     public Map(String mapTitle, String mapDescription, String address, double latitude, double longitude,
                int zoomLevel, String publishLink, boolean isOnSearch, User user) {
