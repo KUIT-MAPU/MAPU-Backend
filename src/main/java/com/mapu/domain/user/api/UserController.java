@@ -1,5 +1,6 @@
 package com.mapu.domain.user.api;
 
+import com.mapu.domain.user.api.request.SignInRequestDTO;
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
 import com.mapu.domain.user.api.request.UserUpdateRequestDTO;
 import com.mapu.domain.user.application.UserService;
@@ -31,13 +32,13 @@ public class UserController {
      * 유저 로그인 API
      */
 
-    @GetMapping("/signin/{socialLoginType}")
-    public BaseResponse<SignInUpResponseDTO> socialLogin(@PathVariable("socialLoginType") String oauthType,
-                                                         @RequestParam("code") String code,
+    @PostMapping("/signin")
+    public BaseResponse<SignInUpResponseDTO> socialLogin(@RequestBody SignInRequestDTO signInRequestDTO,
                                                          HttpServletRequest httpServletRequest,
                                                          HttpServletResponse httpServletResponse) {
-        log.info("socialLoginType: {}", oauthType.toUpperCase());
-        SignInUpResponseDTO response = oAuthService.login(oauthType.toUpperCase(), code, httpServletRequest.getSession(), httpServletResponse);
+
+        log.info("socialLoginType: {}", signInRequestDTO.getSocialType().toUpperCase());
+        SignInUpResponseDTO response = oAuthService.login(signInRequestDTO.getSocialType().toUpperCase(), signInRequestDTO.getCode(), httpServletRequest.getSession(), httpServletResponse);
 
         return new BaseResponse<>(response);
     }
@@ -80,11 +81,21 @@ public class UserController {
     /**
      * 유저데이터 삭제 API
      */
-    @GetMapping("/delete")
-    public BaseResponse deleteUser(@RequestParam("id") long deleteUserId, HttpServletRequest httpServletRequest) {
-        log.info("deleteUser: {}", deleteUserId);
+    @DeleteMapping
+    public BaseResponse deleteUser(@AuthenticationPrincipal JwtUserDto jwtUserDto, HttpServletRequest httpServletRequest) {
+        long deleteUserId = Long.parseLong(jwtUserDto.getName());
         userService.deleteUser(httpServletRequest, deleteUserId);
         oAuthService.unlinkUserInfo(deleteUserId);
         return new BaseResponse<>();
+    }
+
+
+    /**
+     * 타유저데이터 조회 (지도 & 팔로우 & 팔로잉 정보)
+     */
+    @GetMapping("/{otherUserId}")
+    public BaseResponse<UserInfoResponseDTO> getUserInfo(@PathVariable Long otherUserId) {
+        UserInfoResponseDTO response = userService.getUserInfo(otherUserId);
+        return new BaseResponse<>(response);
     }
 }

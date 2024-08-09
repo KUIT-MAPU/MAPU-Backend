@@ -6,17 +6,20 @@ import com.mapu.domain.map.application.response.MapEditorResponseDTO;
 import com.mapu.domain.map.application.response.MapListResponseDTO;
 import com.mapu.domain.map.application.response.MapOwnerResponseDTO;
 import com.mapu.domain.map.dao.MapKeywordRepository;
+import com.mapu.domain.map.dao.MapUserBookmarkRepository;
 import com.mapu.domain.map.dao.MapRepository;
 import com.mapu.domain.map.dao.MapUserRoleRepository;
 import com.mapu.domain.map.domain.Map;
 import com.mapu.domain.map.domain.MapUserRole;
 import com.mapu.domain.map.domain.Role;
+import com.mapu.domain.map.domain.MapUserBookmark;
 import com.mapu.domain.map.exception.MapException;
 import com.mapu.domain.map.exception.errcode.MapExceptionErrorCode;
 import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
 import com.mapu.domain.user.exception.UserException;
 import com.mapu.domain.user.exception.errorcode.UserExceptionErrorCode;
+import com.mapu.domain.map.exception.errcode.MapExceptionErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +43,7 @@ public class MapService {
     private final MapKeywordRepository keywordRepository;
     private final UserRepository userRepository;
     private final MapUserRoleRepository mapUserRoleRepository;
+    private final MapUserBookmarkRepository mapUserBookmarkRepository;
 
     public void checkLoginStatus(HttpServletRequest request) {
     }
@@ -97,6 +101,21 @@ public class MapService {
                 .build();
     }
 
+    public void addMapBookmark(long userId, Long mapId) {
+        User user = userRepository.findById(userId);
+        Map map = mapRepository.findById(mapId).orElseThrow(()-> new MapException(MapExceptionErrorCode.NOT_FOUND_MAP));
+        MapUserBookmark mapUserBookmark = MapUserBookmark.builder().user(user).map(map).build();
+        mapUserBookmarkRepository.save(mapUserBookmark);
+    }
+
+    public void removeMapBookmark(long userId, Long mapId) {
+        MapUserBookmark mapUserBookmark = mapUserBookmarkRepository.findByUserIdAndMapId(userId, mapId);
+        if (mapUserBookmark == null){
+            throw new MapException(MapExceptionErrorCode.NOT_FOUND_BOOKMARK);
+        }
+        mapUserBookmarkRepository.delete(mapUserBookmark);
+    }
+
     public MapEditorListResponseDTO getEditorList(long mapId, int pageNumber, int pageSize) {
         Map map = mapRepository.findById(mapId);
         if (map==null) throw new MapException(MapExceptionErrorCode.NO_EXIST_MAP);
@@ -145,5 +164,12 @@ public class MapService {
                 .build();
 
         mapUserRoleRepository.save(mapUserRole);
+    }
+
+    public List<MapListResponseDTO> getOtherUserMapList(long otherUserId, Pageable pageable) {
+        List<Map> maps = mapRepository.findOtherUserMapsByUserId(otherUserId, pageable);
+        log.info("MapService getOtherUserMapList - Retrieved {} map(s) from the database", maps.size());
+        return maps.stream().map(this::mapConvertToDTO).collect(Collectors.toList());
+
     }
 }
