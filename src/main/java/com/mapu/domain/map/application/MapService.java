@@ -28,11 +28,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MapService {
 
-    @Autowired
     private  MapRespository mapRepository;
-    @Autowired
     private MapKeywordRepository keywordRepository;
-    @Autowired
     private UserRepository userRepository;
 
     public void checkLoginStatus(HttpServletRequest request) {

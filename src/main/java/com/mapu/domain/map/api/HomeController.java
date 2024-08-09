@@ -29,6 +29,7 @@ public class HomeController {
 
         if (jwtUserDto != null) {
             // 로그인한 사용자의 경우
+            log.info("로그인한 사용자의 경우");
             String userId = jwtUserDto.getName();
             recommendedEditors = editorService.getRecommendedEditors(Long.parseLong(userId), 5);
         } else {
@@ -48,6 +49,16 @@ public class HomeController {
     }
 
 
+    @GetMapping("/map")
+    public BaseResponse<List> getMap(@AuthenticationPrincipal JwtUserDto jwtUserDto) {
+
+        //로그인 사용자일 경우
+        //팔로우한 사용자의 지도 조회
 
 
+
+        //비 로그인 사용자일 경우
+        //랜덤 사용자 지도 조회
+        return null;
+    }
 }

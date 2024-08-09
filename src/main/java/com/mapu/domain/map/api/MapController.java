@@ -63,8 +63,7 @@ public class MapController {
     /**
      *  맵 생성
      */
-    @RequestMapping("/create")
-    @PostMapping
+    @PostMapping("/create")
     public BaseResponse<Void> createMap(@AuthenticationPrincipal JwtUserDto jwtUserDto,
                                                   @Valid @RequestBody CreateMapRequestDTO requestDTO) {
         Long userId = Long.parseLong(jwtUserDto.getName());

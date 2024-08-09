@@ -21,8 +21,7 @@ public class FollowController {
      * followerId 나
      * followingId 팔로우할 대상
      */
-    @RequestMapping("/follow")
-    @PostMapping
+    @PostMapping("/follow")
     public BaseResponse<Void> followUser(@AuthenticationPrincipal JwtUserDto jwtUserDto,
                                                       @RequestBody FollowRequestDTO followRequestDTO) {
         Long followerId = Long.parseLong(jwtUserDto.getName());
@@ -36,8 +35,7 @@ public class FollowController {
      * followerId 나
      * followingId 언팔로우할 대상
      */
-    @RequestMapping("/unfollow")
-    @PostMapping
+    @PostMapping("/unfollow")
     public BaseResponse<Void> unfollowUser(@AuthenticationPrincipal JwtUserDto jwtUserDto,
                                                         @RequestBody FollowRequestDTO followRequestDTO) {
         String followerId = jwtUserDto.getName();
@@ -49,8 +47,7 @@ public class FollowController {
      * 팔로워 목록 조회 API
      * userId 팔로워 목록을 조회할 사용자의 ID
      */
-    @RequestMapping("/follower")
-    @GetMapping
+    @GetMapping("/follower")
     public BaseResponse<FollowListResponseDTO> getFollowers(@AuthenticationPrincipal JwtUserDto jwtUserDto) {
         Long userId = Long.parseLong(jwtUserDto.getName());
         FollowListResponseDTO response = followService.getFollowers(userId);
@@ -61,8 +58,7 @@ public class FollowController {
      * 팔로잉 목록 조회 API
      *  userId 팔로잉 목록을 조회할 사용자의 ID
      */
-    @RequestMapping("/following")
-    @GetMapping
+    @GetMapping("/following")
     public BaseResponse<FollowListResponseDTO> getFollowing(@AuthenticationPrincipal JwtUserDto jwtUserDto) {
         Long userId = Long.parseLong(jwtUserDto.getName());
         FollowListResponseDTO response = followService.getFollowing(userId);
