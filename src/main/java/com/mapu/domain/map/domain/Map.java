@@ -31,6 +31,9 @@ public class Map extends BaseEntity {
     private String mapDescription;
 
     @NotNull
+    private String imageUrl;
+
+    @NotNull
     private String address;
 
     @NotNull
