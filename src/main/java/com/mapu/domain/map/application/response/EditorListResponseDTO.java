@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class EditorListResponseDTO {
-    private Long id;
+    private Long userId;
     private String image;
     private String nickname;
     private String profileId;
@@ -19,7 +19,7 @@ public class EditorListResponseDTO {
 
     public static EditorListResponseDTO from(User user) {
         return EditorListResponseDTO.builder()
-                .id(user.getId())
+                .userId(user.getId())
                 .nickname(user.getNickname())
                 .image(user.getImage())
                 .profileId(user.getProfileId())
