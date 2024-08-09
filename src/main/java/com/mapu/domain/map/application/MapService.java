@@ -39,11 +39,13 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class MapService {
+
     private final MapRepository mapRepository;
     private final MapKeywordRepository keywordRepository;
     private final UserRepository userRepository;
     private final MapUserRoleRepository mapUserRoleRepository;
     private final MapUserBookmarkRepository mapUserBookmarkRepository;
+
 
     public void checkLoginStatus(HttpServletRequest request) {
     }

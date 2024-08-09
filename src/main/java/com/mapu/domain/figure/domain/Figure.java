@@ -26,6 +26,7 @@ public class Figure extends BaseEntity {
     private Map map;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private FigureType type;
 
     @NotNull
