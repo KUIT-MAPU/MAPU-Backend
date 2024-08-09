@@ -19,19 +19,16 @@ import com.mapu.domain.user.dao.UserRepository;
 import com.mapu.domain.user.domain.User;
 import com.mapu.domain.user.exception.UserException;
 import com.mapu.domain.user.exception.errorcode.UserExceptionErrorCode;
-import com.mapu.domain.map.exception.errcode.MapExceptionErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -147,9 +144,10 @@ public class MapService {
                 .user(user)
                 .build();
         mapRepository.save(map);
+        addOwner(map.getId(), user.getNickname());
     }
 
-    public void addEditor(long mapId, String nickname) {
+    public void addRole(long mapId, String nickname, Role role) {
         User user = userRepository.findByNickname(nickname);
         if (user==null) throw new UserException(UserExceptionErrorCode.INVALID_NICKNAME);
 
@@ -161,11 +159,19 @@ public class MapService {
         }
 
         MapUserRole mapUserRole = MapUserRole.builder()
-                .role(Role.EDITOR)
+                .role(role)
                 .user(user).map(map)
                 .build();
 
         mapUserRoleRepository.save(mapUserRole);
+    }
+
+    public void addOwner(long mapId, String nickname) {
+        addRole(mapId, nickname, Role.OWNER);
+    }
+
+    public void addEditor(long mapId, String nickname) {
+        addRole(mapId, nickname, Role.EDITOR);
     }
 
     public List<MapListResponseDTO> getOtherUserMapList(long otherUserId, Pageable pageable) {
