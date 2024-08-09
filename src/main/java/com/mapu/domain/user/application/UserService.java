@@ -1,5 +1,7 @@
 package com.mapu.domain.user.application;
 
+import com.mapu.domain.follow.dao.FollowRepository;
+import com.mapu.domain.map.dao.MapRepository;
 import com.mapu.domain.user.api.request.SignUpRequestDTO;
 import com.mapu.domain.user.api.request.UserUpdateRequestDTO;
 import com.mapu.domain.user.application.response.SignInUpResponseDTO;
@@ -42,6 +44,8 @@ public class UserService {
     private final S3Service s3Service;
     private final JwtService jwtService;
     private final JwtUtil jwtUtil;
+    private final MapRepository mapRepository;
+    private final FollowRepository followRepository;
 
     public SignInUpResponseDTO signUp(SignUpRequestDTO signUpRequestDTO, MultipartFile imageFile, HttpSession session, HttpServletResponse response) throws IOException {
         //세션으로부터 사용자 정보 받아오기
@@ -144,12 +148,14 @@ public class UserService {
         }
     }
 
-    public void deleteUser(HttpServletRequest request, long deleteUserId) {
+    public long deleteUser(HttpServletRequest request, long deleteUserId) {
+        log.info("delete user id {}", deleteUserId);
         User user = userRepository.findById(deleteUserId);
         logoutUser(request);
         // userRepository.delete(user); // Option1: 완전 삭제
         user.setStatus(String.valueOf(UserStatus.DELETE)); // Option2: 상태 변경
         userRepository.save(user);
+        return user.getId();
     }
 
     public void logoutUser(HttpServletRequest request) {
@@ -166,32 +172,39 @@ public class UserService {
         jwtService.deleteRefreshJwt(refresh);
     }
 
-    public UserInfoResponseDTO getUserInfo(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if(user==null) throw new UserException(UserExceptionErrorCode.INVALID_USERID);
+    public UserInfoResponseDTO getUserInfo(long userId) {
+        User findUser= userRepository.findById(userId);
+        if(findUser==null) throw new UserException(UserExceptionErrorCode.INVALID_USERID);
 
-        User findUser = user.get();
+        int mapCnt = mapRepository.countMapsByUserId(userId);
+        int followerCnt = followRepository.countFollowerByUserId(userId);
+        int followingCnt = followRepository.countFollowingByUserId(userId);
 
-        //TODO: Map, Follow 테이블 생성 후 데이터 추가 필요
         UserInfoResponseDTO response = UserInfoResponseDTO
                 .builder().nickname(findUser.getNickname())
                 .profileId(findUser.getProfileId())
                 .imgUrl(findUser.getImage())
-                .mapCnt(0)
-                .followerCnt(0)
-                .followingCnt(0)
+                .mapCnt(mapCnt)
+                .followerCnt(followerCnt)
+                .followingCnt(followingCnt)
                 .build();
 
         return response;
     }
 
     public void updateUser(long userId, UserUpdateRequestDTO request, MultipartFile image) throws IOException {
+        //imageUrl이 들어온 경우 -> 원래 이미지 사용
+        //imageUrl이 안들어온 경우 -> 기본 이미지 혹은 새로운 이미지 파일 업로드
+
         User user = userRepository.findById(userId);
         if(user==null) throw new UserException(UserExceptionErrorCode.INVALID_USERID);
 
+        //이상한 imageUrl이 들어온 경우
+        if(request.getImageUrl()!=null && !request.getImageUrl().equals(user.getImage())) throw new UserException(UserExceptionErrorCode.INVALID_IMAGE);
+
         user.setNickname(request.getNickname());
         user.setProfileId(request.getProfileId());
-        if(image.isEmpty()) user.setImage(null);
+        if(image.isEmpty()) user.setImage(request.getImageUrl());
         else {
             String imageUrl = uploadImage(image);
             user.setImage(imageUrl);

@@ -30,6 +30,9 @@ public class Map extends BaseEntity {
     private String mapDescription;
 
     @NotNull
+    private String imageUrl;
+
+    @NotNull
     private String address;
 
     @NotNull
@@ -55,8 +58,6 @@ public class Map extends BaseEntity {
 
     @OneToMany(mappedBy = "map", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Figure> figure = new ArrayList<>();
-
-
 
     @Builder
     public Map(String mapTitle, String mapDescription, String address, double latitude, double longitude,
