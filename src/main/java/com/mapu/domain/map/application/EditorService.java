@@ -31,7 +31,7 @@ public class EditorService {
 
     private List<EditorListResponseDTO> convertToDTOList(List<User> users) {
         return users.stream()
-                .map(EditorListResponseDTO::from)
+                .map(EditorListResponseDTO::new)
                 .collect(Collectors.toList());
     }
 }

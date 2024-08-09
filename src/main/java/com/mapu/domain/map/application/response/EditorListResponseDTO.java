@@ -16,14 +16,12 @@ public class EditorListResponseDTO {
     private String nickname;
     private String profileId;
 
-
-    public static EditorListResponseDTO from(User user) {
-        return EditorListResponseDTO.builder()
-                .userId(user.getId())
-                .nickname(user.getNickname())
-                .image(user.getImage())
-                .profileId(user.getProfileId())
-                .build();
+    @Builder
+    public EditorListResponseDTO(User user) {
+        this.userId = user.getId();
+        this.nickname = user.getNickname();
+        this.image = user.getImage();
+        this.profileId = user.getProfileId();
     }
 }
 
