@@ -43,11 +43,12 @@ public class MapController {
      */
     @GetMapping("/search")
     public BaseResponse<List<MapListResponseDTO>> getMapList(
-            @RequestParam("searchType") String searchType,
+            @RequestParam(value = "searchType", defaultValue = "RANDOM") String searchType,
+            @RequestParam(value = "searchWord", defaultValue = "") String searchWord,
             final Pageable pageable) {
 
         log.info("MapController searchType: {}", searchType);
-        List<MapListResponseDTO> responseDTOList = mapService.getMapList(searchType.toUpperCase(), pageable);
+        List<MapListResponseDTO> responseDTOList = mapService.getMapList(searchType.toUpperCase(), pageable, searchWord);
         log.info("MapController getMapList - responseDTOList size: {}", responseDTOList.size());
         return new BaseResponse<>(responseDTOList);
     }

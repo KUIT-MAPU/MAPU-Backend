@@ -48,14 +48,14 @@ public class MapService {
     public void checkLoginStatus(HttpServletRequest request) {
     }
 
-    public List<MapListResponseDTO> getMapList(String searchType, Pageable pageable) {
+    public List<MapListResponseDTO> getMapList(String searchType, Pageable pageable, String searchWord) {
         switch (searchType) {
             case "RANDOM": {
-                List<MapListResponseDTO> mapList = getMapListByRandom(pageable);
+                List<MapListResponseDTO> mapList = getMapListByRandom(pageable, searchWord);
                 return mapList;
             }
             case "DATE": {
-                List<MapListResponseDTO> mapList = getMapListByDate(pageable);
+                List<MapListResponseDTO> mapList = getMapListByDate(pageable, searchWord);
                 return mapList;
             }
             default:
@@ -63,14 +63,14 @@ public class MapService {
         }
     }
 
-    private List<MapListResponseDTO> getMapListByDate(Pageable pageable) {
-        List<Map> maps = mapRepository.findAllByOrderByCreatedAtDesc(pageable);
+    private List<MapListResponseDTO> getMapListByDate(Pageable pageable, String searchWord) {
+        List<Map> maps = mapRepository.findAllByOrderByCreatedAtDesc(searchWord,pageable);
         log.info("MapService GetMapListByDate - Retrieved {} map(s) from the database", maps.size());
         return maps.stream().map(this::mapConvertToDTO).collect(Collectors.toList());
     }
 
-    private List<MapListResponseDTO> getMapListByRandom(Pageable pageable) {
-        List<Map> maps = mapRepository.findAllByRandom(pageable);
+    private List<MapListResponseDTO> getMapListByRandom(Pageable pageable, String searchWord) {
+        List<Map> maps = mapRepository.findAllByRandom(searchWord, pageable);
         log.info("MapService GetMapListByRandom - Retrieved {} map(s) from the database", maps.size());
         return maps.stream().map(this::mapConvertToDTO).collect(Collectors.toList());
     }
@@ -95,7 +95,7 @@ public class MapService {
                 .title(map.getMapTitle())
                 .region(map.getAddress())
                 .description(map.getMapDescription())
-                .imageUrl(map.getPublishLink())
+                .imageUrl(map.getImageUrl())
                 .user(mapOwnerDTO)
                 .keyword(keywords)
                 .build();
