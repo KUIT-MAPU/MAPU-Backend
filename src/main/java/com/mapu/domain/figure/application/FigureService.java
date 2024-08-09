@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class FigureService {
 
-    @Autowired
     private final FigureRepository figureRepository;
 
     public FigureResponseDTO getFigure(Long figureId) {
