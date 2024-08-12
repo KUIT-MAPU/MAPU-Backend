@@ -26,4 +26,9 @@ public interface MapRepository extends JpaRepository<Map, Long> {
 
     @Query("SELECT m FROM Map m WHERE m.user.id = :otherUserId")
     List<Map> findOtherUserMapsByUserId(@Param("otherUserId") Long otherUserId, Pageable pageable);
+
+    List<Map> findByUserId(Long userId);
+
+    @Query("SELECT m FROM Map m JOIN m.keywords k WHERE k.keyword.keyword = :keyword")
+    List<Map> findByKeyword(@Param("keyword") String keyword);
 }

@@ -1,7 +1,7 @@
-package com.mapu.domain.map.application;
+package com.mapu.domain.keyword.application;
 
-import com.mapu.domain.map.dao.KeywordRepository;
-import com.mapu.domain.map.domain.Keyword;
+import com.mapu.domain.keyword.dao.KeywordRepository;
+import com.mapu.domain.keyword.domain.Keyword;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

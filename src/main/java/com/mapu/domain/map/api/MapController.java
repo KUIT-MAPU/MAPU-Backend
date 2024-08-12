@@ -3,8 +3,8 @@ package com.mapu.domain.map.api;
 import com.mapu.domain.map.api.request.AddEditorRequestDTO;
 import com.mapu.domain.map.api.request.CreateMapRequestDTO;
 import com.mapu.domain.map.application.MapService;
+import com.mapu.domain.map.application.MapUserRoleService;
 import com.mapu.domain.map.application.response.MapEditorListResponseDTO;
-import com.mapu.domain.map.application.response.MapEditorResponseDTO;
 import com.mapu.domain.map.application.response.MapListResponseDTO;
 import com.mapu.global.common.response.BaseResponse;
 import com.mapu.global.jwt.dto.JwtUserDto;
@@ -28,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MapController {
     private final MapService mapService;
+    private final MapUserRoleService mapUserRoleService;
 
     /**
      * 탐색화면 로그인 여부 확인
@@ -78,7 +79,7 @@ public class MapController {
     public BaseResponse<MapEditorListResponseDTO> getEditorList(@PathVariable("mapId") Long mapId,
                                                                 @RequestParam("page") int pageNum,
                                                                 @RequestParam("size") int pageSize) {
-        MapEditorListResponseDTO response = mapService.getEditorList(mapId,pageNum, pageSize);
+        MapEditorListResponseDTO response = mapUserRoleService.getEditorList(mapId,pageNum, pageSize);
         return new BaseResponse<>(response);
     }
 
@@ -88,7 +89,7 @@ public class MapController {
     @PostMapping("/{mapId}/editor")
     public BaseResponse addEditor(@PathVariable("mapId") Long mapId,
                                   @RequestBody AddEditorRequestDTO addEditorRequestDTO){
-        mapService.addEditor(mapId, addEditorRequestDTO.getNickname());
+        mapUserRoleService.addEditor(mapId, addEditorRequestDTO.getNickname());
         return new BaseResponse();
     }
 
@@ -105,9 +106,18 @@ public class MapController {
     }
 
     /**
+     * 맵 편집 페이지 접속
+     */
+    @GetMapping("/{mapId}")
+    public BaseResponse<Void> accessMap(@AuthenticationPrincipal JwtUserDto jwtUserDto,
+                                        @PathVariable("mapId") Long mapId) {
+        return new BaseResponse();
+    }
+
+    /**
      * 타유저의 지도데이터 조회
      */
-    @GetMapping("/{otherUserId}")
+    @GetMapping("/list/{otherUserId}")
     public BaseResponse getOtherUserMap(@PathVariable("otherUserId") long otherUserId,
                                         Pageable pageable) {
         List<MapListResponseDTO> response = mapService.getOtherUserMapList(otherUserId, pageable);

@@ -1,7 +1,6 @@
-package com.mapu.domain.map.application;
+package com.mapu.domain.home;
 
-import com.mapu.domain.map.application.response.EditorListResponseDTO;
-import com.mapu.domain.map.dao.EditorRepository;
+import com.mapu.domain.home.dao.EditorRepository;
 import com.mapu.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

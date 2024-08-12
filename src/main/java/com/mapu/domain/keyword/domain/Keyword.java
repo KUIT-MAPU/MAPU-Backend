@@ -1,4 +1,4 @@
-package com.mapu.domain.map.domain;
+package com.mapu.domain.keyword.domain;
 
 import com.mapu.global.common.domain.BaseEntity;
 import jakarta.persistence.Entity;

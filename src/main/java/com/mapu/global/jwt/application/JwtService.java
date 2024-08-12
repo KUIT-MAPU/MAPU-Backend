@@ -18,43 +18,8 @@ public class JwtService {
     private final JwtUtil jwtUtil;
     private final JwtRedisRepository jwtRedisRepository;
 
-    private void checkToken(String token, String tokenType) {
-        //refresh token 검증용! accesstoken은 jwtfilter에서 검증
-
-        if (token == null) {
-            //response status code
-            JwtExceptionErrorCode errorCode = JwtExceptionErrorCode.NO_JWT_TOKEN_IN_HEADER;
-            errorCode.addTokenTypeInfoToMessage(tokenType);
-            throw new JwtException(errorCode);
-        }
-
-        //expired check
-        try {
-            jwtUtil.isExpired(token);
-        } catch (ExpiredJwtException e) {
-            JwtExceptionErrorCode errorCode = JwtExceptionErrorCode.EXPIRED_JWT_TOKEN;
-            errorCode.addTokenTypeInfoToMessage(tokenType);
-            throw new JwtException(errorCode);
-        }
-
-        // 토큰 type 확인 (발급시 페이로드에 명시)
-        String category = jwtUtil.getCategory(token);
-        if (!category.equals(tokenType)) {
-            JwtExceptionErrorCode errorCode = JwtExceptionErrorCode.INVALID_JWT_TOKEN;
-            errorCode.addTokenTypeInfoToMessage(tokenType);
-            throw new JwtException(errorCode);
-        }
-    }
-
-    public JwtUserDto getUserDtoFromToken(String token, String tokenType) {
-        checkToken(token, tokenType);
-        return JwtUserDto.builder().name(Long.valueOf(jwtUtil.getName(token)))
-                .role(UserRole.valueOf(jwtUtil.getRole(token)))
-                .build();
-    }
-
     private void verifyRefreshToken(String token) {
-        checkToken(token, JwtUtil.REFRESH);
+        jwtUtil.checkToken(token, JwtUtil.REFRESH);
         if(!jwtRedisRepository.existsById(token)) {
             throw new JwtException(JwtExceptionErrorCode.UNKNOWN_REFRESH_TOKEN);
         }
@@ -62,7 +27,7 @@ public class JwtService {
 
     public AccessTokenResponseDto reissueAccessToken(String refresh) {
         verifyRefreshToken(refresh);
-        JwtUserDto jwtUserDto = getUserDtoFromToken(refresh, JwtUtil.REFRESH);
+        JwtUserDto jwtUserDto = jwtUtil.getUserDtoFromToken(refresh, JwtUtil.REFRESH);
         String accessToken = jwtUtil.createAccessToken(jwtUserDto);
 
         return new AccessTokenResponseDto(accessToken);
@@ -75,7 +40,7 @@ public class JwtService {
 
     public Cookie rotateRefreshToken(String refresh) {
         deleteRefreshJwt(refresh);
-        JwtUserDto jwtUserDto = getUserDtoFromToken(refresh, JwtUtil.REFRESH);
+        JwtUserDto jwtUserDto = jwtUtil.getUserDtoFromToken(refresh, JwtUtil.REFRESH);
         return jwtUtil.createRefreshJwtCookie(jwtUserDto);
     }
 

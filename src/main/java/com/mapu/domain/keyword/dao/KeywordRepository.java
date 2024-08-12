@@ -1,6 +1,6 @@
-package com.mapu.domain.map.dao;
+package com.mapu.domain.keyword.dao;
 
-import com.mapu.domain.map.domain.Keyword;
+import com.mapu.domain.keyword.domain.Keyword;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

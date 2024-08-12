@@ -1,4 +1,4 @@
-package com.mapu.domain.map.dao;
+package com.mapu.domain.home.dao;
 
 import com.mapu.domain.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,15 +1,10 @@
 package com.mapu.domain.follow.application.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
-@Builder
-@NoArgsConstructor
+@Getter
 public class FollowListResponseDTO {
     private Long userId;
     private List<FollowUserDTO> users;

@@ -1,11 +1,9 @@
-package com.mapu.domain.map.application.response;
+package com.mapu.domain.home;
 
 import com.mapu.domain.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @Builder

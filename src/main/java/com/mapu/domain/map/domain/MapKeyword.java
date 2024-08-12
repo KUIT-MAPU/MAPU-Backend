@@ -1,5 +1,6 @@
 package com.mapu.domain.map.domain;
 
+import com.mapu.domain.keyword.domain.Keyword;
 import com.mapu.global.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

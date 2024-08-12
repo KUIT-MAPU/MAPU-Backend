@@ -18,6 +18,8 @@ public class CreateMapRequestDTO {
 
     private String mapDescription;
 
+    private String imageUrl;
+
     @NotNull(message = "주소는 필수입니다.")
     private String address;
 

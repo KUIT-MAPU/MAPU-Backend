@@ -1,8 +1,6 @@
 package com.mapu.global.jwt.filter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mapu.global.common.response.BaseErrorResponse;
-import com.mapu.global.common.response.status.ResponseStatus;
 import com.mapu.global.jwt.exception.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,12 +19,12 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         try{
             filterChain.doFilter(request,response);
         }catch (JwtException e){
-            setErrorResponse(HttpStatus.UNAUTHORIZED, request , response, e);
+            setErrorResponse(response, e);
         }
     }
 
-    public void setErrorResponse(HttpStatus unauthorized, HttpServletRequest request, HttpServletResponse response, JwtException e) throws IOException {
-        response.setStatus(unauthorized.value());
+    public void setErrorResponse(HttpServletResponse response, JwtException e) throws IOException {
+        response.setStatus(e.getExceptionStatus().getStatus());
         response.setContentType("application/json; charset=UTF-8");
         response.getWriter().write(
                 new BaseErrorResponse(e.getExceptionStatus())

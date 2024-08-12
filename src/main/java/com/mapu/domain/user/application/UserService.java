@@ -46,6 +46,8 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final MapRepository mapRepository;
     private final FollowRepository followRepository;
+    private static final String ANONYMOUS_NICKNAME = "환영해요!";
+    private static final String ANONYMOUS_PROFILEID = "로그인이 필요해요";
 
     public SignInUpResponseDTO signUp(SignUpRequestDTO signUpRequestDTO, MultipartFile imageFile, HttpSession session, HttpServletResponse response) throws IOException {
         //세션으로부터 사용자 정보 받아오기
@@ -172,7 +174,12 @@ public class UserService {
         jwtService.deleteRefreshJwt(refresh);
     }
 
-    public UserInfoResponseDTO getUserInfo(long userId) {
+    public UserInfoResponseDTO getUserInfo(JwtUserDto jwtUserDto) {
+        if(jwtUserDto==null){
+            return returnAnonyMousUserData();
+        }
+
+        long userId = Long.parseLong(jwtUserDto.getName());
         User findUser= userRepository.findById(userId);
         if(findUser==null) throw new UserException(UserExceptionErrorCode.INVALID_USERID);
 
@@ -187,6 +194,19 @@ public class UserService {
                 .mapCnt(mapCnt)
                 .followerCnt(followerCnt)
                 .followingCnt(followingCnt)
+                .build();
+
+        return response;
+    }
+
+    private UserInfoResponseDTO returnAnonyMousUserData() {
+        UserInfoResponseDTO response = UserInfoResponseDTO
+                .builder().nickname(ANONYMOUS_NICKNAME)
+                .profileId(ANONYMOUS_PROFILEID)
+                .imgUrl(null)
+                .mapCnt(0)
+                .followerCnt(0)
+                .followingCnt(0)
                 .build();
 
         return response;
@@ -209,5 +229,29 @@ public class UserService {
             String imageUrl = uploadImage(image);
             user.setImage(imageUrl);
         }
+    }
+
+    public UserInfoResponseDTO getOtherUserInfo(JwtUserDto jwtUserDto, long otherUserId) {
+        if(jwtUserDto==null){
+            return returnAnonyMousUserData();
+        }
+
+        User findUser= userRepository.findById(otherUserId);
+        if(findUser==null) throw new UserException(UserExceptionErrorCode.INVALID_USERID);
+
+        int mapCnt = mapRepository.countMapsByUserId(otherUserId);
+        int followerCnt = followRepository.countFollowerByUserId(otherUserId);
+        int followingCnt = followRepository.countFollowingByUserId(otherUserId);
+
+        UserInfoResponseDTO response = UserInfoResponseDTO
+                .builder().nickname(findUser.getNickname())
+                .profileId(findUser.getProfileId())
+                .imgUrl(findUser.getImage())
+                .mapCnt(mapCnt)
+                .followerCnt(followerCnt)
+                .followingCnt(followingCnt)
+                .build();
+
+        return response;
     }
 }

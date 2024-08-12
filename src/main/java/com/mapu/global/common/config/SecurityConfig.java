@@ -1,5 +1,6 @@
 package com.mapu.global.common.config;
 
+import com.mapu.domain.map.application.MapUserRoleService;
 import com.mapu.global.jwt.JwtUtil;
 import com.mapu.global.jwt.filter.JwtExceptionFilter;
 import com.mapu.global.jwt.filter.JwtFilter;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -28,6 +30,23 @@ import java.util.List;
 public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
+    private final MapUserRoleService mapUserRoleService;
+
+
+    private final String[] WHITE_LIST = new String[]{
+            "/user/signin/**",
+            "/user/signup/**",
+            "/map",
+            "/search/map",
+            "/jwt/reissue",
+            "/error",
+            "/home/editor",
+            "/home/keyword",
+            "/map/logined",
+            "/map/list/**",
+            "/map/search"
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //csrf disable
@@ -41,6 +60,21 @@ public class SecurityConfig {
         //HTTP Basic 인증 방식 disable
         http
                 .httpBasic((auth) -> auth.disable());
+
+        //경로별 인가 작업
+        http
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers(WHITE_LIST).permitAll()
+                        .requestMatchers(HttpMethod.GET,"/user").permitAll()
+                        .requestMatchers("/map/bookmark", "/map/create").authenticated()
+                        .requestMatchers("/map/**").access(new MapAuthorizationManager(mapUserRoleService))
+                        .anyRequest().authenticated());
+
+        //JWTFilter 추가
+        http
+                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(new JwtLogoutFilter(jwtService), LogoutFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class );
 
         //CORS 설정
         http
@@ -59,28 +93,6 @@ public class SecurityConfig {
                         return configuration;
                     }
                 }));
-
-        //JWTFilter 추가
-        http
-                .addFilterBefore(new JwtFilter(jwtService,jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class )
-                .addFilterAt(new JwtLogoutFilter(jwtService), LogoutFilter.class);
-
-        //oauth2 -> 필요없음
-//        http
-//                .oauth2Login(Customizer.withDefaults());
-
-        //경로별 인가 작업
-        http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/user/signin/**", "/user/signup/**", "/user/delete").permitAll()
-                        .requestMatchers("/search/map").permitAll()
-                        .requestMatchers("/jwt/reissue").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/map").permitAll()
-                        .requestMatchers("/home/editor").permitAll()
-                        .requestMatchers("/home/keyword").permitAll()
-                        .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
         http

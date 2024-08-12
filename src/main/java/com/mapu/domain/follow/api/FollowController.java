@@ -35,7 +35,7 @@ public class FollowController {
      * followerId 나
      * followingId 언팔로우할 대상
      */
-    @PostMapping("/unfollow")
+    @DeleteMapping("/unfollow")
     public BaseResponse<Void> unfollowUser(@AuthenticationPrincipal JwtUserDto jwtUserDto,
                                                         @RequestBody FollowRequestDTO followRequestDTO) {
         String followerId = jwtUserDto.getName();

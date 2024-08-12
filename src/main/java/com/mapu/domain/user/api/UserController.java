@@ -63,7 +63,7 @@ public class UserController {
 
     @GetMapping
     public BaseResponse<UserInfoResponseDTO> getUserInfo(@AuthenticationPrincipal JwtUserDto jwtUserDto){
-        UserInfoResponseDTO response = userService.getUserInfo(Long.parseLong(jwtUserDto.getName()));
+        UserInfoResponseDTO response = userService.getUserInfo(jwtUserDto);
         return new BaseResponse<>(response);
     }
 
@@ -94,8 +94,8 @@ public class UserController {
      * 타유저데이터 조회 (지도 & 팔로우 & 팔로잉 정보)
      */
     @GetMapping("/{otherUserId}")
-    public BaseResponse<UserInfoResponseDTO> getUserInfo(@PathVariable Long otherUserId) {
-        UserInfoResponseDTO response = userService.getUserInfo(otherUserId);
+    public BaseResponse<UserInfoResponseDTO> getOtherUserInfo(@AuthenticationPrincipal JwtUserDto jwtUserDto, @PathVariable long otherUserId) {
+        UserInfoResponseDTO response = userService.getOtherUserInfo(jwtUserDto, otherUserId);
         return new BaseResponse<>(response);
     }
 }
