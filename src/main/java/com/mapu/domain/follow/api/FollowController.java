@@ -3,12 +3,17 @@ package com.mapu.domain.follow.api;
 import com.mapu.domain.follow.api.request.FollowRequestDTO;
 import com.mapu.domain.follow.application.FollowService;
 import com.mapu.domain.follow.application.response.FollowListResponseDTO;
+import com.mapu.domain.follow.dao.FollowRepository;
+import com.mapu.domain.follow.exception.FollowException;
+import com.mapu.domain.follow.exception.errorcode.FollowExceptionErrorCode;
 import com.mapu.global.common.response.BaseResponse;
 import com.mapu.global.jwt.dto.JwtUserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -37,9 +42,9 @@ public class FollowController {
      */
     @DeleteMapping("/unfollow")
     public BaseResponse<Void> unfollowUser(@AuthenticationPrincipal JwtUserDto jwtUserDto,
-                                                        @RequestBody FollowRequestDTO followRequestDTO) {
-        String followerId = jwtUserDto.getName();
-        followService.unfollowUser(Long.parseLong(followerId), followRequestDTO.getFollowingId());
+                                           @RequestParam Long followingId) {
+        Long followerId = Long.parseLong(jwtUserDto.getName());
+        followService.unfollowUser(followerId, followingId);
         return new BaseResponse<>(null);
     }
 
