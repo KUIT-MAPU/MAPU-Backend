@@ -4,6 +4,7 @@ import com.mapu.domain.map.api.request.AddEditorRequestDTO;
 import com.mapu.domain.map.api.request.CreateMapRequestDTO;
 import com.mapu.domain.map.application.MapService;
 import com.mapu.domain.map.application.MapUserRoleService;
+import com.mapu.domain.map.application.response.MapCreateResponseDTO;
 import com.mapu.domain.map.application.response.MapEditorListResponseDTO;
 import com.mapu.domain.map.application.response.MapListResponseDTO;
 import com.mapu.global.common.response.BaseResponse;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -98,11 +100,12 @@ public class MapController {
      *  맵 생성
      */
     @PostMapping("/create")
-    public BaseResponse<Void> createMap(@AuthenticationPrincipal JwtUserDto jwtUserDto,
+    public BaseResponse<MapCreateResponseDTO> createMap(@AuthenticationPrincipal JwtUserDto jwtUserDto,
                                                   @Valid @RequestBody CreateMapRequestDTO requestDTO) {
         Long userId = Long.parseLong(jwtUserDto.getName());
-        mapService.createMap(requestDTO, userId);
-        return new BaseResponse<>(null);
+        Long mapId = mapService.createMap(requestDTO, userId);
+        MapCreateResponseDTO response = new MapCreateResponseDTO(mapId);
+        return new BaseResponse<>(response);
     }
 
     /**

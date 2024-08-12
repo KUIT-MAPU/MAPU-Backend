@@ -1,6 +1,8 @@
 package com.mapu.domain.map.application;
 
 import com.mapu.domain.map.api.request.CreateMapRequestDTO;
+import com.mapu.domain.map.application.response.MapEditorListResponseDTO;
+import com.mapu.domain.map.application.response.MapEditorResponseDTO;
 import com.mapu.domain.map.application.response.MapListResponseDTO;
 import com.mapu.domain.map.application.response.MapOwnerResponseDTO;
 import com.mapu.domain.map.dao.MapKeywordRepository;
@@ -15,6 +17,8 @@ import com.mapu.domain.user.domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,8 +110,7 @@ public class MapService {
         mapUserBookmarkRepository.delete(mapUserBookmark);
     }
 
-
-    public void createMap(CreateMapRequestDTO requestDTO, Long userId) {
+    public Long createMap(CreateMapRequestDTO requestDTO, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저 없음"));
 
         Map map = Map.builder()
@@ -117,13 +120,14 @@ public class MapService {
                 .latitude(requestDTO.getLatitude())
                 .longitude(requestDTO.getLongitude())
                 .zoomLevel(requestDTO.getZoomLevel())
-                .publishLink(requestDTO.getPublishLink())
                 .isOnSearch(requestDTO.getIsOnSearch())
                 .imageUrl(requestDTO.getImageUrl())
                 .user(user)
                 .build();
         mapRepository.save(map);
-        mapUserRoleService.addOwner(map.getId(), user.getNickname());
+
+        Map savedMap = mapRepository.save(map);
+        return savedMap.getId();
     }
 
     public List<MapListResponseDTO> getOtherUserMapList(long otherUserId, Pageable pageable) {

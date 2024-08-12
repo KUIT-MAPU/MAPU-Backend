@@ -61,14 +61,13 @@ public class Map extends BaseEntity {
 
     @Builder
     public Map(String mapTitle, String mapDescription, String address, double latitude, double longitude,
-               int zoomLevel, String publishLink, boolean isOnSearch, User user,String imageUrl) {
+               int zoomLevel, boolean isOnSearch, User user,String imageUrl) {
         this.mapTitle = mapTitle;
         this.mapDescription = mapDescription;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.zoomLevel = zoomLevel;
-        this.publishLink = publishLink;
         this.isOnSearch = isOnSearch;
         this.user = user;
         this.imageUrl = imageUrl;
