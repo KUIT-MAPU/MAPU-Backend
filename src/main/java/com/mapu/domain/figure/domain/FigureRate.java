@@ -4,6 +4,7 @@ import com.mapu.global.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -23,8 +24,18 @@ public class FigureRate extends BaseEntity {
     private Figure figure;
 
     @NotNull
-    private String rate_name;
+    @Column(name = "rate_name")
+    private String rateName;
 
     @NotNull
-    private int rate_star;
+    @Column(name = "rate_star")
+    private int rateStar;
+
+    @Builder
+    public FigureRate(Figure figure, String rate_name, int rate_star) {
+        this.figure = figure;
+        this.rateName = rate_name;
+        this.rateStar = rate_star;
+    }
+
 }
