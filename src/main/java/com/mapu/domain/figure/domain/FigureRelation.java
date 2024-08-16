@@ -1,17 +1,17 @@
 package com.mapu.domain.figure.domain;
 
-import com.mapu.global.common.domain.BaseEntity;
-import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
-public class FigureRelation extends BaseEntity {
+public class FigureRelation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,4 +23,10 @@ public class FigureRelation extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "figure2_id")
     private Figure figure2;
+
+    @Builder
+    public FigureRelation(Figure figure, Figure figure2) {
+        this.figure = figure;
+        this.figure2 = figure2;
+    }
 }

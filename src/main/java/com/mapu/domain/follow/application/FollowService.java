@@ -51,8 +51,9 @@ public class FollowService {
     /**
      * 언팔로우 API 서비스
      */
+    @Transactional
     public void unfollowUser(Long followerId, Long followingId) {
-        // 팔로워와 팔로잉 ID가 같을 때
+        //자기자신 언팔
         if (followerId.equals(followingId)) {
             throw new FollowException(FollowExceptionErrorCode.SELF_UNFOLLOW_NOT_ALLOWED);
         }

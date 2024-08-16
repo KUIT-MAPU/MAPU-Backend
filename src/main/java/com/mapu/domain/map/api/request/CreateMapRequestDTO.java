@@ -32,8 +32,6 @@ public class CreateMapRequestDTO {
     @NotNull(message = "줌 레벨은 필수입니다.")
     private Integer zoomLevel;
 
-    private String publishLink;
-
     @NotNull(message = "검색 노출 여부는 필수입니다.")
     private Boolean isOnSearch;
 

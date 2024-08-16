@@ -1,10 +1,12 @@
 package com.mapu.domain.figure.domain;
 
 import com.mapu.domain.map.domain.Map;
+import com.mapu.domain.user.domain.User;
 import com.mapu.global.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -51,9 +53,10 @@ public class Figure extends BaseEntity {
     private List<FigureRate> rate = new ArrayList<>();
 
     @OneToMany(mappedBy = "figure", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FigureRate> relation = new ArrayList<>();
+    private List<FigureRelation> relation = new ArrayList<>();
 
     @OneToMany(mappedBy = "figure", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FigureRate> vertex = new ArrayList<>();
+    private List<FirgureVertex> vertex = new ArrayList<>();
+
 
 }

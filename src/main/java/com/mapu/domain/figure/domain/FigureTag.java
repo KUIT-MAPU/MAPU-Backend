@@ -5,6 +5,7 @@ import com.mapu.global.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -24,4 +25,11 @@ public class FigureTag extends BaseEntity {
 
     @NotNull
     private String tag;
+
+    @Builder
+    public FigureTag( @NotNull Figure figure, @NotNull String tag) {
+        this.figure = figure;
+        this.tag = tag;
+    }
+
 }
